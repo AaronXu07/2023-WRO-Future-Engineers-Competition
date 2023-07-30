@@ -38,6 +38,9 @@ count = 0
 TurnFrameCount = 0
 FinalFrame = 0
 
+LeftTurn = False
+RightTurn = False
+
 if __name__ == '__main__':
     
     GPIO.setwarnings(False)
@@ -80,7 +83,7 @@ while True:
     """
     
     L_subimage = im[225:390, 40:150]
-    R_subimage = im[225:390, 490:600]
+    R_subimage = im[225:390, 490:590] #was 600
     L_imgHSV = cv2.cvtColor(L_subimage, cv2.COLOR_BGR2HSV)
     R_imgHSV = cv2.cvtColor(R_subimage, cv2.COLOR_BGR2HSV)
     L_mask = cv2.inRange(L_imgHSV, lower_black, upper_black)
@@ -150,11 +153,14 @@ while True:
     #cv2.imshow("R_contours", R_subimage)
     #cv2.imshow("Camera", im)
     
-    
-    sendnum=1380 #starts moving the car forwards
-    sendnum = str(sendnum)
-    ser.write((sendnum + "\n").encode('utf-8'))
+    if(RightTurn == False and LeftTurn == False):   
+        sendnum=1380 #starts moving the car forwards
+        sendnum = str(sendnum)
+        ser.write((sendnum + "\n").encode('utf-8'))
      
+    if(LeftTurn):
+        sendnum = 1370
+        
     if (right_lane_a > 25 and left_lane_a > 25): #if detect both walls
         
         if (TurnFrameCount > 12):
@@ -175,8 +181,8 @@ while True:
         
         steering = int((kp * error) + (kd * derivative))
         
-        if (steering > 25): #make sure steering is limited so it doesn't steer too much 
-            steering = 25  
+        if (steering > 27): #make sure steering is limited so it doesn't steer too much 
+            steering = 27  
         elif (steering < -27):
             steering = -27
         
@@ -190,6 +196,7 @@ while True:
         
     elif (right_lane_a > 30 and left_lane_a <= 30): #if detect only right wall
         TurnFrameCount+=1
+        LeftTurn = True
         sendnum = 2145
         #print("angle is: ", sendnum)
         sendnum = str(sendnum)
