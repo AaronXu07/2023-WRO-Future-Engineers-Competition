@@ -22,7 +22,7 @@ upper_black = np.array([180,255,47])
 
 derivative = -1
 sendnum = 1500
-angle = 2100
+angle = 2098
 
 #color in BGR
 #YELLOW = (0, 255, 255)
