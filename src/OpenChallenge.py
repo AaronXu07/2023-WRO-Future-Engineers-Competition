@@ -18,7 +18,7 @@ picam2.configure("preview")
 picam2.start()
 
 lower_black = np.array([0,0,0])
-upper_black = np.array([180,255,47])
+upper_black = np.array([170,255,56])
 
 derivative = -1
 sendnum = 1500
@@ -67,8 +67,8 @@ while True:
     fps = str(fps)
     cv2.putText(im, fps, (8, 70), font, 3, (100, 255, 0), 3, cv2.LINE_AA)
     
-    Left_points = [(40,225), (150,225), (150,390), (40,390)] #left region of interest
-    Right_points = [(600,225), (490,225), (490,390), (600,390)] #right region of interest
+    Left_points = [(15,250), (170,250), (170,370), (15,370)] #left region of interest
+    Right_points = [(625,250), (480,250), (480,370), (625,370)] #right region of interest
     
     # Using cv2.line() method to draw a yellow line with thickness of 4 px
     im = cv2.line(im, Left_points[0], Left_points[1], YELLOW, thickness)
@@ -82,8 +82,9 @@ while True:
     im = cv2.line(im, Right_points[3], Right_points[0], YELLOW, thickness)
     """
     
-    L_subimage = im[225:390, 40:150]
-    R_subimage = im[225:390, 490:590] #was 600
+    L_subimage = im[250:390, 15:170]
+    R_subimage = im[250:390, 480:625] #was 490-590
+    
     L_imgHSV = cv2.cvtColor(L_subimage, cv2.COLOR_BGR2HSV)
     R_imgHSV = cv2.cvtColor(R_subimage, cv2.COLOR_BGR2HSV)
     L_mask = cv2.inRange(L_imgHSV, lower_black, upper_black)
@@ -153,17 +154,14 @@ while True:
     #cv2.imshow("R_contours", R_subimage)
     #cv2.imshow("Camera", im)
     
-    if(RightTurn == False and LeftTurn == False):   
-        sendnum=1380 #starts moving the car forwards
-        sendnum = str(sendnum)
-        ser.write((sendnum + "\n").encode('utf-8'))
+    sendnum=1380 #starts moving the car forwards
+    sendnum = str(sendnum)
+    ser.write((sendnum + "\n").encode('utf-8'))
      
-    if(LeftTurn):
-        sendnum = 1370
         
     if (right_lane_a > 25 and left_lane_a > 25): #if detect both walls
         
-        if (TurnFrameCount > 12):
+        if (TurnFrameCount > 16):
             if (count < 12):
                 count+=1
                 print(count)
@@ -176,15 +174,15 @@ while True:
         else:
             derivative = error-prev_error
         
-        kp = 0.0055
-        kd = 0.0055
+        kp = 0.0045
+        kd = 0.0045
         
         steering = int((kp * error) + (kd * derivative))
         
-        if (steering > 27): #make sure steering is limited so it doesn't steer too much 
-            steering = 27  
-        elif (steering < -27):
-            steering = -27
+        if (steering > 26): #make sure steering is limited so it doesn't steer too much 
+            steering = 26
+        elif (steering < -26):
+            steering = -26
         
         
         sendnum = angle-steering # Greater Than 2100 = to left | Less than 2100 = to the right 
@@ -197,7 +195,7 @@ while True:
     elif (right_lane_a > 30 and left_lane_a <= 30): #if detect only right wall
         TurnFrameCount+=1
         LeftTurn = True
-        sendnum = 2145
+        sendnum = 2133
         #print("angle is: ", sendnum)
         sendnum = str(sendnum)
         ser.write((sendnum + "\n").encode('utf-8'))
@@ -205,7 +203,7 @@ while True:
             
     elif (right_lane_a <= 30 and left_lane_a > 30): #if detect only left wall
         TurnFrameCount+=1
-        sendnum = 2051
+        sendnum = 2063
         #print("angle is: ", sendnum)
         sendnum = str(sendnum)
         ser.write((sendnum + "\n").encode('utf-8'))
@@ -214,7 +212,7 @@ while True:
     if (count == 12):
         FinalFrame += 1
         
-        if(FinalFrame > 13):
+        if(FinalFrame > 35):
             sendnum = str(1500)#stops car
             ser.write((sendnum + "\n").encode('utf-8'))
             sendnum = str(2100)
