@@ -1,7 +1,14 @@
-Engineering Documentation
+Engineering Documentation | Team Dominus | Explorer Robotics | Canada
 ====
 
-This repository contains engineering process including materials, software,  schematic, pictures, and descriptions of a self-driven vehicle's model participating in the WRO Future Engineers competition in the season 2023.
+This repository contains the engineering process including materials, software,  schematic, pictures, and descriptions of Team Dominus's self-driven vehicle model participating in the WRO Future Engineers competition in the season 2023.
+----
+
+## Team Members: 
+- Aaron Xu - email: <aaronssupmail@gmail.com>
+- Rudransh Srivastava - email: <rudranshsri55@gmail.com>
+- Daniel Chen - email: <daniel.chen0113@gmail.com>
+**----**
 
 ## Content
 
