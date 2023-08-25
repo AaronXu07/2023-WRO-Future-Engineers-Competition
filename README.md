@@ -47,6 +47,12 @@ https://www.amazon.ca/Portable-Platform-Raspberry-Accessories-handhold/dp/B097RC
 Raspberry Pi Model 4:
 https://www.amazon.ca/Raspberry-Model-2019-Quad-Bluetooth/dp/B07TD42S27/ref=asc_df_B07TD42S27/?tag=googleshopc0c-20&linkCode=df0&hvadid=335380394635&hvpos=&hvnetw=g&hvrand=1557654368064585468&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9000759&hvtargid=pla-774661502856&psc=1
 
+Baomain Soken Red Light DPST Switch:
+https://www.amazon.ca/Baomain-Soken-Light-Rocker-Switch/dp/B01EJDT2W0
+
+CERRXIAN 90 Degree USB A to USB B Printer Cable:
+https://www.amazon.com/CERRXIAN-1FT-USB-Cable/dp/B0B74F2YYZ
+
 ----
 
 
@@ -75,6 +81,11 @@ Battery Power for robot
 Raspberry Pi Model 4:
 To recode the robot for the task at hand. 
 
+Baomain Soken Red Light DPST Switch:
+Switch to turn on the raspberry pi and electronic speed controller with one switch
+
+CERRXIAN 90 Degree USB A to USB B Printer Cable:
+90 Degree cables to replace the old protruding wires that collided with obstacles.   
 
 ## Process
 
