@@ -76,7 +76,7 @@ Raspberry Pi Model 4:
 To recode the robot for the task at hand. 
 
 
-## Introduction
+## Process
 
 First off, we started our process by purchasing the Traxxas LaTrax Rally ⅛ 4WD RTR Rally Racer kit. Upon its arrival, we took off the cover, and decided to make modifications. The first change we made was replacing the original motor with the 2435 Brushless 4500KV Motor. This ensured that our car would be powerful enough to perform in the competition. Next, we made a cover for the vehicle using cardboard and black duct tape. However, we decided that it would not be sturdy enough, so we ended up using a clipboard for holding the car’s parts and a Lego camera mount. We found this to be much more stable than the previous make. After this we 
 
