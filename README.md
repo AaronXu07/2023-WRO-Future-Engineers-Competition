@@ -46,8 +46,8 @@ https://www.amazon.ca/Portable-Platform-Raspberry-Accessories-handhold/dp/B097RC
 Raspberry Pi Model 4:
 https://www.amazon.ca/Raspberry-Model-2019-Quad-Bluetooth/dp/B07TD42S27/ref=asc_df_B07TD42S27/?tag=googleshopc0c-20&linkCode=df0&hvadid=335380394635&hvpos=&hvnetw=g&hvrand=1557654368064585468&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9000759&hvtargid=pla-774661502856&psc=1
 
-Baomain Soken Red Light DPST Switch:
-https://www.amazon.ca/Baomain-Soken-Light-Rocker-Switch/dp/B01EJDT2W0
+DKARDU Rocker Switch 4 Pins 2 Position ON/Off Red LED Light Illuminated DPST Switch:
+https://www.amazon.ca/gp/product/B09TKMR8J4/ref=ppx_yo_dt_b_search_asin_title?ie=UTF8&th=1
 
 CERRXIAN 90 Degree USB A to USB B Printer Cable:
 https://www.amazon.com/CERRXIAN-1FT-USB-Cable/dp/B0B74F2YYZ
@@ -83,7 +83,7 @@ Battery pack for Raspberry Pi which includes a push button for the challenge.
 Raspberry Pi Model 4:
 Serves as the brain of the robot. The code on the raspberry pi does the image processing and sends the control signals to the arduino. Most of the coding is done on the raspberry pi. 
 
-Baomain Soken Red Light DPST Switch:
+DKARDU Rocker Switch 4 Pins 2 Position ON/Off Red LED Light Illuminated DPST Switch:
 Switch to turn on the Raspberry Pi and electronic speed controller with one switch
 
 CERRXIAN 90 Degree USB A to USB B Printer Cable:
