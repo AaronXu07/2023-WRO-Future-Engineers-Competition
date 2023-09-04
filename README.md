@@ -96,4 +96,24 @@ Battery for motor to keep the vehicle in function.
 
 First off, we started our process by purchasing the Traxxas LaTrax Rally ⅛ 4WD RTR Rally Racer kit. Upon its arrival, we took off the cover and decided to make modifications. The first change we made was replacing the original motor with the 2435 Brushless 4500KV Motor. This ensured that our car would be powerful and precise enough to perform in the competition. Additionally, the brushless DC motor would not deteriorate like the brushed DC motor. Throughout the process of changing the motor, we had to replace the original electronic speed controller with the new compatible electronic speed controller and remove the radio receiver. Since we needed a way to supply power to the servo, connect the signal cables from the Arduino to the servo motor and DC motor, and grounding the DC motor and servo motor, we made a plug-in chip with soldered connections which we used to connect the signal wires, power wires, and ground wires to the servo motor and DC motor. Next, we made many prototypes for the vehicle base, and camera mount using cardboard and black duct tape. After coming up with the perfect design, we made it sturdy for the final product. A cut clipboard for a base to hold the car’s parts. This was suspended by four, one cm standoffs screwed to the chassis plate. We also made the camera mount out of Lego because it was lightweight and sturdy. The lego was glued together at the end to ensure stability and sturdiness. Afterwards, we screwed our camera into the mount and positioned it so it could detect as much as possible, including the ground and walls. Then we attached the arduino and the raspberry pi onto the base clipboard of the robot. The last thing we had to do was connect all the wires to their respective ports and manage them properly using electrical tape and zip-ties to prevent them from protruding, this in turn helped to keep our robot compact and organized.
 
+## Overview of Code.
+
+To complete the open and obstacle challenges we needed to program computer vision code as well as analyze the computer vision to  maneuver the course. This was done on the raspberry pi. The raspberry pi then sends number commands to the arduino, which controls the DC motor speed and steering. The arduino code was coded in c++ and receives a number from the raspberry pi. This number dictates what action the arduino should perform: a signal of 1500 is a complete stop, under 1500 is forward, over 1500 is backward, and the number over 2000 is the angle at which the servo must steer. On the raspberry pi, we used a variety of libraries, most notably, OpenCV (cv2) for camera operations, time for time-related functions, Picamera2 for controlling the Raspberry Pi camera, serial for communication with an Arduino, numpy for array processing, and RPi.GPIO for handling a push-button to start the car.
+
+## Open Challenge Code
+
+Below are the steps in order of the program logic for the Open Challenge: 
+
+1. **Camera Setup:** Configure and start the Raspberry Pi camera, setting parameters such as resolution, and format
+   
+2. **Color Thresholds:** Defines upper and lower threshold values for detecting the color black, orange and blue in the camera feed, used for contour detection.
+   
+3. **Variables Initialization:** Initializes various variables, including ones for controlling the car's movement, counting turns, and detecting specific colored lines on the ground.
+   
+4. **Button Start:** The program waits until a push-button connected to GPIO pin 5 is pressed to start the main loop.
+   
+5. **Main Loop:** In the main loop, it captures frames from the camera and processes them. There are six main sections of the main loop: Image Processing, Contour Detection, Wall Following, 
+
+
+
 _This part must be filled by participants with the technical clarifications about the code: which modules the code consists of, how they are related to the electromechanical components of the vehicle, and what is the process to build/compile/upload the code to the vehicle’s controllers._
