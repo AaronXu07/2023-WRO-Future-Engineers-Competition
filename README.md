@@ -72,7 +72,7 @@ Gikfun Uno R3 Case for Arduino:
 Case for our Arduino which we used for easy attachment onto the vehicle. Also protects the arduino from getting damaged.
 
 RC Car Motor ESC Combo:
-Brushless motor for greater energy efficiency, better speed and higher torque resulting in quicker turning capability and efficiency of our robot. Additionally, the brushless motor allows us to have better control of the speed of our robot over the original brushed motor that the chassis came with. 
+Brushless motor for greater energy efficiency sincer there aren't any brushes creating friction and losing energy. Additionally, the brushless motor will have better speed and higher torque resulting in quicker turning capability and efficiency of our robot. Moreover, the brushless motor allows us to have better control of the speed of our robot over the original brushed motor that the chassis came with. 
 
 Raspberry Pi Wide Angle Camera Module:
 For our needs the best camera that is compatible with Raspberry Pi with great colour quality and high fps which is great for our color lane detection system. Used to detect walls and obstacles for both the open and obstacle challenges.  
