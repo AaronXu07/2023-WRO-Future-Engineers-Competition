@@ -52,6 +52,9 @@ https://www.amazon.ca/Baomain-Soken-Light-Rocker-Switch/dp/B01EJDT2W0
 CERRXIAN 90 Degree USB A to USB B Printer Cable:
 https://www.amazon.com/CERRXIAN-1FT-USB-Cable/dp/B0B74F2YYZ
 
+Hosim 2pcs 7.4V 1600mAh 25C T Connector Replacement Rechargable Battery:
+https://www.amazon.ca/Hosim-2pcs-1600mAh-Connector-Li-Polymer/dp/B098QSLJKV/ref=sr_1_1?crid=3V6BDXMLEJUCW&keywords=high+c+rating+lipo&qid=1693796045&sprefix=high+c+rating+lipo%2Caps%2C105&sr=8-1
+
 ----
 
 
@@ -85,6 +88,9 @@ Switch to turn on the Raspberry Pi and electronic speed controller with one swit
 
 CERRXIAN 90 Degree USB A to USB B Printer Cable:
 90-degree cables to replace the old protruding wires which collided with obstacles.   
+
+Hosim 2pcs 7.4V 1600mAh 25C T Connector Replacement Rechargable Battery:
+Battery for motor to keep the vehicle in function.
 
 ## Process
 
