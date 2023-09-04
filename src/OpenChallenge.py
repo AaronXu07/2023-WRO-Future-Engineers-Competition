@@ -41,14 +41,15 @@ count = 0#variable which counts how many turns the car has made
 TurnFrameCount = 0 #variable that tracks how many frames the turn has lasted to make sure the same turn isnt counted multiple times
 FinalFrame = 0 #counts how many frames has passed since the last turn to stop in the correct section
 
-Clockwise = False
-CounterClockwise = False
+Clockwise = False #variable true only if the direction of movement is clockwise
+CounterClockwise = False #variable to true only if the direction of movement is counter clockwise
 
-Blue_Seen = False
-Orange_Seen = False
+Blue_Seen = False #variable true after the blue line is seen (necessary for tracking the turn)
+Orange_Seen = False #variable true after the orange line is seen (necessary for tracking the turn)
 
-blue_line_a = 0
-orange_line_a = 0 
+blue_line_a = 0 #variable that tracks the blue line's area
+orange_line_a = 0 #variable that tracks the orange line's area
+
 if __name__ == '__main__':
     
     GPIO.setwarnings(False)#setup for the push buton to start the car
@@ -73,6 +74,7 @@ while True: #main program loop
     # read image from disk
     im= picam2.capture_array()
     
+    #commented code below displays regions of interest borders and is for debugging and fixing errors in the algorithm
     """
     font = cv2.FONT_HERSHEY_SIMPLEX
     new_frame_time = time.time()
@@ -175,31 +177,32 @@ while True: #main program loop
             """
             right_lane_a = RightMaxA #assigns the largest right contour found to right_lane_a
                     
-            #print("Number of Right Contours found = " + str(len(R_contours)))
     
     if (len(R_contours) == 0 or RightMaxA <= 70): #the right wall area will be set to 0 if no contours are found
         right_lane_a = 0  
     if (len(L_contours) == 0 or LeftMaxA <= 70): #the left wall area will be set to 0 if no contours are found
         left_lane_a = 0
       
-    turn_imgHSV = cv2.cvtColor(turn_subimage, cv2.COLOR_BGR2HSV)
-    lower_blue = np.array([100, 140, 0], np.uint8) #away
+    turn_imgHSV = cv2.cvtColor(turn_subimage, cv2.COLOR_BGR2HSV) #converts the turning region of interest that looks for lines into HSV colour format
+    lower_blue = np.array([100, 140, 0], np.uint8) #away (lower threshold for blue line colour)
     #lower_blue = np.array([100, 120, 0], np.uint8) #home
-    upper_blue = np.array([140, 255, 255], np.uint8)
-    maskb = cv2.inRange(turn_imgHSV, lower_blue, upper_blue)
-    blue_contours = cv2.findContours(maskb, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2] # find blue contours
+    upper_blue = np.array([140, 255, 255], np.uint8) #(upper threshold for blue line colour)
+    maskb = cv2.inRange(turn_imgHSV, lower_blue, upper_blue) #mask to filter everything out but the blue colour of the line
+    blue_contours = cv2.findContours(maskb, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2] # find blue contours and add them all to the blue_contours array
     
-    BMaxA = 0
-    BMaxI = 0
-    if (len(blue_contours) > 0):
-        for i in range(len(blue_contours)):
-            B_cnt = blue_contours[i]
-            area = cv2.contourArea(B_cnt)
-            if(area > BMaxA):
-                BMaxA = area
-                BMaxI = i 
+    BMaxA = 0 #area of the largest blue contour found
+    BMaxI = 0 #index of the largest blue contour found
+    
+    if (len(blue_contours) > 0): #algorithm finds the largest contour, only happens if it finds any contours
+        for i in range(len(blue_contours)): #loops through all the found contours
+            B_cnt = blue_contours[i]  #access the current contour
+            area = cv2.contourArea(B_cnt) #gets the area of the contour
+            if(area > BMaxA): #if the current contour area is larger than the previous largest area, then it becomes the largest contour
+                BMaxA = area #assigns the maximum area found to the current contour if it is the largest
+                BMaxI = i #assigns the index of the current contour if it is the largest
         
-        if (BMaxA > 300):
+        if (BMaxA > 300): #only uses the largest contour area if it is large enough
+            #commented code below is used to draw contours for debugging
             """
             B_cnt = blue_contours[BMaxI]
             area = cv2.contourArea(B_cnt)
@@ -208,31 +211,33 @@ while True: #main program loop
             x,y,w,h=cv2.boundingRect(approx)
             cv2.rectangle(turn_subimage,(x,y),(x+w,y+h),(255, 255, 255),2)
             """
-            blue_line_a = BMaxA
+            blue_line_a = BMaxA #blue_line_area is the detected blue line area
 
             #print("Blue Line Area = " + str(blue_line_a))        
             #print("Number of red contours found = " + str(len(red_contours)))
                 
-    if (len(blue_contours) == 0 or BMaxA <= 70):
+    if (len(blue_contours) == 0 or BMaxA <= 70): #if there is no blue line contours found then it assigns the area to be 0
         blue_line_a = 0
      
-    turn_imgHSV = cv2.cvtColor(turn_subimage, cv2.COLOR_BGR2HSV)
-    lower_orange = np.array([5, 60, 50], np.uint8) # was [5, 50, 50]
-    upper_orange = np.array([18, 255, 255], np.uint8)
-    masko = cv2.inRange(turn_imgHSV, lower_orange, upper_orange)
-    orange_contours = cv2.findContours(masko, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2] # find blue contours
+    turn_imgHSV = cv2.cvtColor(turn_subimage, cv2.COLOR_BGR2HSV) #converts the turning region of interest that looks for lines into HSV colour format
+    lower_orange = np.array([5, 60, 50], np.uint8) # was [5, 50, 50] (lower threshold for the orange line colour)
+    upper_orange = np.array([18, 255, 255], np.uint8) #(upper threshold for the orange line colour)
+    masko = cv2.inRange(turn_imgHSV, lower_orange, upper_orange) #mask to filter everything out but the blue colour of the line
+    orange_contours = cv2.findContours(masko, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2] # find orange contours and add them all into the orange_contours array
     
-    OMaxA = 0
-    OMaxI = 0
-    if (len(orange_contours) > 0):
-        for i in range(len(orange_contours)):
-            O_cnt = orange_contours[i]
-            area = cv2.contourArea(O_cnt)
-            if(area > OMaxA):
-                OMaxA = area
-                OMaxI = i 
+    OMaxA = 0#area of the largest orange contour found
+    OMaxI = 0#index of the largest orange contour found
+    if (len(orange_contours) > 0):  #algorithm finds the largest contour, only happens if it finds any contours
+        for i in range(len(orange_contours)): #loops through all of the found contours
+            O_cnt = orange_contours[i] #temporary variable O_cnt is set to the current contour being analyzed
+            area = cv2.contourArea(O_cnt) #gets the area of the current contour
+            
+            if(area > OMaxA):  #if the current contour area is larger than the previous largest area, then it becomes the largest contour
+                OMaxA = area #assigns the maximum area found to the current contour if it is the largest
+                OMaxI = i #assigns the index of the current contour if it is the largest
         
-        if (OMaxA > 300):
+        if (OMaxA > 300):#only uses the largest contour area if it is large enough
+            #commented code below is used to draw contours for debugging
             """
             O_cnt = orange_contours[OMaxI]
             area = cv2.contourArea(O_cnt)
@@ -242,57 +247,58 @@ while True: #main program loop
             x,y,w,h=cv2.boundingRect(approx)
             cv2.rectangle(turn_subimage,(x,y),(x+w,y+h),(255, 255, 255),2)
             """
-            orange_line_a = OMaxA
+            orange_line_a = OMaxA #orange_line_area is the detected orange line area
 
             #print("Orange Line Area = " + str(orange_line_a))        
             #print("Number of orange contours found = " + str(len(orange_contours)))
                 
-    if (len(orange_contours) == 0 or OMaxA <= 70):
+    if (len(orange_contours) == 0 or OMaxA <= 70):  #if there is no blue line contours found then it assigns the area to be 0
         orange_line_a = 0
         
         
     #cv2.imshow("Camera", im)
 
 
-    sendnum=1375#starts moving the car forwards (home 1360) (mat 1370)
-    sendnum = str(sendnum) #converts the number to a string
-    ser.write((sendnum + "\n").encode('utf-8')) #sends the sendnum to the arduino to be processed there
+    sendnum=1370#starts moving the car forwards (home 1360) (mat 1370)
+    sendnum = str(sendnum) #converts the number to a string so that it can be sent
+    ser.write((sendnum + "\n").encode('utf-8')) #sends the command to the arduino to be processed there
     
     
-    if(blue_line_a > 300): #counting counterclockwise movement (detect blue line for turn)
-        if(Clockwise == False and CounterClockwise == False):
-            CounterClockwise = True
+    if(blue_line_a > 300): #tracking counterclockwise movement (detect blue line for turn)
+        if(Clockwise == False and CounterClockwise == False): #only sets direction if no direction has been set, if blue line is seen first, it is counterclockwise
+            CounterClockwise = True #sets CounterClowckwise variable to true so the program knows which direction the car is moving in
             print("Counterclockwise")
-        if(CounterClockwise):
+        if(CounterClockwise): #if the car is moveing counterclockwise and sees the blue line in the corner, the program will track the turn length
             TurnFrameCount+=1
             
-        Blue_Seen = True
-        Orange_Seen = False
+        Blue_Seen = True #if the blue line is seen, it seets Blue_Seen to true
+        Orange_Seen = False #sets orange seen to false to stop the sharp turn for clockwise movement
+    
+    elif(CounterClockwise): #adding a turn count after it passes the blue line
+        if(TurnFrameCount > 2 and count < 12): #only happens if the turn has been over 2 frames to prevent bugs 
+            TurnFrameCount=0 #resets the turnframecount variable
+            count+=1
+            print(count)
             
-    elif(orange_line_a > 300):#counting cclockwise movement (detect orange line for turn)
-        if(Clockwise == False and CounterClockwise == False):
-            Clockwise = True
+    if(orange_line_a > 300):#tracking clockwise movement (detect orange line for turn)
+        if(Clockwise == False and CounterClockwise == False): #only sets direction if no direction has been set, if orange line is seen first, it is clockwise
+            Clockwise = True #sets Clockwise variable to true so the program knows which direction the car is moving in
             print("Clockwise")
-        if(Clockwise):
+        if(Clockwise): #if the car is moveing clockwise and sees the orange line in the corner, the program will track the turn length
             TurnFrameCount+=1
         
         Orange_Seen = True
         Blue_Seen = False
     
-    else: #adding count on turn
-        if(TurnFrameCount > 2 and count < 12): 
-            TurnFrameCount=0
+    elif(Clockwise):  #adding a turn count after it passes the orange line
+        if(TurnFrameCount > 2 and count < 12): #only counts a turn if the turn has been over 2 frames to prevent bugs
+            TurnFrameCount=0#resets the turnframecount variable
             count+=1
             print(count)
-            
+     
+     
+    #WALL FOLLOWING     
     if (right_lane_a > 150 and left_lane_a > 150): #if detects a wall on both sides of the car, it should perform wall following
-        
-        if (right_lane_a > 775 and left_lane_a > 775): #only add turn count when the walls are big enough, meaning the turn has entirely finished before we count the turn
-            if (TurnFrameCount > 15): #second precaution requiring the turn to last long enough, to prevent misscounting
-                if (count < 12): #stops counting turns when it has done enough turns
-                    count+=1
-                    print(count)
-                    TurnFrameCount = 0
             
         error = left_lane_a - right_lane_a #error is the differece between the areas of the turns, this value determines which area is larger therefore which wall the robot is closer to 
         
@@ -315,8 +321,10 @@ while True: #main program loop
         sendnum = angle-steering # Greater Than 2100 = to left | Less than 2100 = to the right, the number sent is the straight angle minus the steering angle       
         
         prev_error = error #previous error is set at the end of the algorithm to be used in the next frame
-        
-    elif (right_lane_a > 80 and left_lane_a <= 80): #if detect only right wall, it should 
+    
+    
+    #TURNING
+    elif (right_lane_a > 80 and left_lane_a <= 80): #if detect only right wall, it should do a large adjustment to the left
         
         if(right_lane_a < 6000):
             sendnum = 2126
@@ -328,7 +336,7 @@ while True: #main program loop
             sendnum = 2138
             
             
-    elif (right_lane_a <= 80 and left_lane_a > 80): #if detect only left wall
+    elif (right_lane_a <= 80 and left_lane_a > 80): #if detect only left wall, it should do a large adjustment to the right
         
         if(left_lane_a < 6000):
             sendnum = 2074
@@ -340,11 +348,12 @@ while True: #main program loop
             sendnum = 2068
 
 
-    if (CounterClockwise == True and Blue_Seen): #if needs to turn sharp left
+    if (CounterClockwise == True and Blue_Seen): #if needs to turn sharp left at a corner
         sendnum = 2132
                
-    if (Clockwise == True and Orange_Seen): #if needs to turn sharp right  
+    if (Clockwise == True and Orange_Seen): #if needs to turn sharp right at a corner
         sendnum= 2074
+    
     
     #print("angle is: ", sendnum)
     sendnum = str(sendnum)#converts the number into a string so that it can be sent 
@@ -353,19 +362,19 @@ while True: #main program loop
     
     #ENDING SECTION
     if (count == 12): #end when see the upcoming line on ground
-        FinalFrame+=1
+        FinalFrame+=1 #adds 1 to how long it needs to wait until it ends
             
-        if(FinalFrame > 85): 
+        if(FinalFrame > 85):  #stops car after it has run 85 frames to make sure it ends at the correct place
             sendnum = str(1500)#stops car
             ser.write((sendnum + "\n").encode('utf-8'))
-            sendnum = str(2098)
+            sendnum = str(2098)#straightens wheels
             ser.write((sendnum + "\n").encode('utf-8'))
             break #breaks out of program           
     
     if cv2.waitKey(1)==ord('q'):#wait until key ‘q’ pressed
         sendnum = str(1500)#stops car
         ser.write((sendnum + "\n").encode('utf-8'))
-        sendnum = str(2100)
+        sendnum = str(2100)#straightens wheels
         ser.write((sendnum + "\n").encode('utf-8'))
         break
 cv2.destroyAllWindows()  
