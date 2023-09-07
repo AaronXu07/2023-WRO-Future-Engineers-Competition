@@ -119,4 +119,28 @@ Below are the steps in order of the program logic for the Open Challenge:
 
 ## Obstacle Challenge Code
 
+Below are the steps in order of the program logic for the Obstacle Challenge. Note that most of the steps are very similar to the Open Challenge, the main difference is the main loop. 
+
+1. **Camera Setup:**  Configure and start the Raspberry Pi camera, setting parameters such as resolution, and format
+   
+2.  **Color Thresholds:** Defines upper and lower threshold values for detecting the color black, orange and blue, red, and green in the camera feed, used for contour detection.
+
+3. **Variables Initialization:**  Initializes various variables for controlling the car's movement, direction of movement (clockwise or counterclockwise), counting turns, detecting colors, turning, and maneuvering obstacles.
+
+4. **Arduino Connection:** It initializes communication with an Arduino board via a serial connection.
+
+5. **Button Start:** The program waits until a push-button connected to GPIO pin 5 is pressed to start the main loop.
+
+6. **Main Loop:** In the Main Loop, the program captures frames from the camera and processes them. There are 8 main sections of the main loop: Image Processing, Contour Detection, Counting Turns, Checking to switch direction, Wall Following, Maneuvering Obstacles, Sending Commands, and Termination. In the Image Processing section, very similar to the open challenge, the program processes the captured image to detect black contours in the left and right regions of interest (ROI), as well as colored lines (blue and orange) on the ground (bottom region of interest); however, it also has a large region of interest in the middle for detecting green and red obstacles, and a region of interest near the top middle for detecting the back wall. In the Contour Detection section, the program uses contour detection with thresholding to find the largest black contours (walls) on the left and right sides of the image, largest blue and orange contours (lines) on the ground, largest red and green contours (pillars) in the middle, and the largest black contour in the middle (approaching back wall). In the Counting Turns section, it counts the number of turns made by the car based on the detected lines. It counts 12 turns in total resulting in 3 laps. In the Checking to Switch Direction section, the program checks to see if the last pillar of the second lap is red. If so the car must turn around. It does this by observing the color of the last seen pillar when approaching the 8th turn. If this pillar is red, a predetermined set of movements (3 point turn) will be performed to turn the car 180 degrees. 1 will also be added to the amount of total turns as it will do 1 less turn to return to the starting section. If the pillar is green, then the car will proceed in the same direction. The Wall Following the section is the same as the open challenge; follow the middle of the walls using Proportional-Derivative (PD) steering control. In the Maneuvering Obstacles section, it overwrites the commands of the wall following commands with commands to avoid the pillar if there is a pillar detected. Like the PD steering, the greater the area of the pillar, the greater the steering angle will be.  Program will send a command to steer right to avoid red pillars, and left to avoid green pillars. If the vehicle gets too close to the upcoming wall (large back wall contour found) because of an avoided pillar, the program will send a command to turn sharp in one direction based off of the color of the avoided pillar. The Sending Commands section and the Termination Section of the obstacle challenge main loop both work the exact same way as the open challenge.
+
+
+## Process to build/compile/upload the code to the Raspberry Pi
+Both  the open challenge and obstacle challenge were coded in python directly on the raspberry pi and saved in the raspberry pi. For the competition, the code must run right after booting up the raspberry pi, without a connected monitor. We solved this issue by editing the rc.local file adding commands to run the python program.
+
+## Process to build/compile/upload the code to the Arduino
+The arduino code was coded on the Arduino IDE on a desktop computer and was uploaded onto the arduino through the usb A to B connection cable. Since the arduino memorizes the uploaded code, this process only needs to be done once. After the code has been uploaded onto the arduino, we connect it to the raspberry pi with the same cable. When the raspberry pi code runs from startup, and the serial port opens, the arduino code compiles from the beginning and runs until the power is shut off. 
+
+
+
+
 _This part must be filled by participants with the technical clarifications about the code: which modules the code consists of, how they are related to the electromechanical components of the vehicle, and what is the process to build/compile/upload the code to the vehicle’s controllers._
