@@ -140,7 +140,3 @@ Both  the open challenge and obstacle challenge were coded in python directly on
 ## Process to build/compile/upload the code to the Arduino
 The arduino code was coded on the Arduino IDE on a desktop computer and was uploaded onto the arduino through the usb A to B connection cable. Since the arduino memorizes the uploaded code, this process only needs to be done once. After the code has been uploaded onto the arduino, we connect it to the raspberry pi with the same cable. When the raspberry pi code runs from startup, and the serial port opens, the arduino code compiles from the beginning and runs until the power is shut off. 
 
-
-
-
-_This part must be filled by participants with the technical clarifications about the code: which modules the code consists of, how they are related to the electromechanical components of the vehicle, and what is the process to build/compile/upload the code to the vehicle’s controllers._
