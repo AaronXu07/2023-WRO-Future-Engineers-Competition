@@ -97,7 +97,9 @@ First off, we started our process by purchasing the Traxxas LaTrax Rally ⅛ 4WD
 
 ## Overview of Code.
 
-To complete the open and obstacle challenges we needed to program computer vision code as well as analyze the computer vision to  maneuver the course. This was done on the raspberry pi. The raspberry pi then sends number commands to the arduino, which controls the DC motor speed and steering. The arduino code was coded in c++ and receives a number from the raspberry pi. This number dictates what action the arduino should perform: a signal of 1500 is a complete stop, under 1500 is forward, over 1500 is backward, and the number over 2000 is the angle at which the servo must steer. On the raspberry pi, we used a variety of libraries, most notably, OpenCV (cv2) for camera operations, time for time-related functions, Picamera2 for controlling the Raspberry Pi camera, serial for communication with an Arduino, numpy for array processing, and RPi.GPIO for handling a push-button to start the car.
+To complete the open and obstacle challenges, we needed to program computer vision in order to maneuver the course. This was done on the Raspberry Pi. The Raspberry Pi then sends number commands to the Arduino, which in turn controls the DC motor speed and steering. The Arduino code is coded in c++ and receives a number from the Raspberry Pi. This number dictates what action the Arduino should perform: a signal of 1500 is a complete stop, under 1500 is forward, over 1500 is backward, and the number over 2000 is the angle at which the servo must steer. We used a variety of libraries on the Raspberry Pi. Most notably, we used OpenCV (cv2) for camera operations, Time for time-related functions, Picamera2 for controlling the Raspberry Pi camera, Serial for communication with an Arduino, Numpy for array processing, and RPi.GPIO for handling a push-button to start the car.
+
+
 
 ## Open Challenge Code
 
