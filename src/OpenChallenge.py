@@ -20,7 +20,7 @@ picam2.start()
 #upper_black = np.array([110,255,30])
 lower_black = np.array([0,0,0]) #lower threshold values for black contour detection
 #upper_black = np.array([100,255,30])#upper threshold values for black contour detection
-upper_black = np.array([170,255,55])
+upper_black = np.array([160,255,55])
 
 derivative = -1 #derivative variable for smooth lane follow, will be used when the program is run
 sendnum = 1500 #send num is the value sent to arduino, 1500 is stop, under 1500 is forward, above 2000 shows the angle
@@ -59,7 +59,7 @@ if __name__ == '__main__':
     ser = serial.Serial('/dev/ttyACM0', 115200, timeout=1) #setup for arduino connection
     ser.flush()
     
-    sleep(8)#delay for arduino to get rady
+    sleep(8)#delay for arduino to get ready
     #print("ready")
 
 while True: #loop ends only when button is pressed which lets the program begin 
@@ -67,7 +67,11 @@ while True: #loop ends only when button is pressed which lets the program begin
         print("Button pressed")
         break
 
-sleep(2.5)
+sleep(1)
+
+sendnum=1395#starts moving the car forwards (home 1360) (mat 1376) #was 90
+sendnum = str(sendnum) #converts the number to a string so that it can be sent
+ser.write((sendnum + "\n").encode('utf-8')) #sends the command to the arduino to be processed there
 
 while True: #main program loop
     
@@ -106,7 +110,7 @@ while True: #main program loop
     im = cv2.line(im, Turn_points[3], Turn_points[0], YELLOW, thickness)
     """
 
-    #subimages for the left and right regions of interest detecting left and right walls
+    #subimages for the left and right regions of interest detecting left and right walls and lines on the ground
     L_subimage = im[230:325, 20:250] 
     R_subimage = im[225:330, 375:620]
     
@@ -201,7 +205,7 @@ while True: #main program loop
                 BMaxA = area #assigns the maximum area found to the current contour if it is the largest
                 BMaxI = i #assigns the index of the current contour if it is the largest
         
-        if (BMaxA > 300): #only uses the largest contour area if it is large enough
+        if (BMaxA > 200): #only uses the largest contour area if it is large enough #was 300
             #commented code below is used to draw contours for debugging
             """
             B_cnt = blue_contours[BMaxI]
@@ -236,7 +240,7 @@ while True: #main program loop
                 OMaxA = area #assigns the maximum area found to the current contour if it is the largest
                 OMaxI = i #assigns the index of the current contour if it is the largest
         
-        if (OMaxA > 300):#only uses the largest contour area if it is large enough
+        if (OMaxA > 200):#only uses the largest contour area if it is large enough #was 300
             #commented code below is used to draw contours for debugging
             """
             O_cnt = orange_contours[OMaxI]
@@ -257,14 +261,9 @@ while True: #main program loop
         
         
     #cv2.imshow("Camera", im)
-
-
-    sendnum=1370#starts moving the car forwards (home 1360) (mat 1370)
-    sendnum = str(sendnum) #converts the number to a string so that it can be sent
-    ser.write((sendnum + "\n").encode('utf-8')) #sends the command to the arduino to be processed there
     
     
-    if(blue_line_a > 300): #tracking counterclockwise movement (detect blue line for turn)
+    if(blue_line_a > 200): #tracking counterclockwise movement (detect blue line for turn) #was 300
         if(Clockwise == False and CounterClockwise == False): #only sets direction if no direction has been set, if blue line is seen first, it is counterclockwise
             CounterClockwise = True #sets CounterClowckwise variable to true so the program knows which direction the car is moving in
             print("Counterclockwise")
@@ -280,7 +279,7 @@ while True: #main program loop
             count+=1
             print(count)
             
-    if(orange_line_a > 300):#tracking clockwise movement (detect orange line for turn)
+    if(orange_line_a > 200):#tracking clockwise movement (detect orange line for turn) #was 300
         if(Clockwise == False and CounterClockwise == False): #only sets direction if no direction has been set, if orange line is seen first, it is clockwise
             Clockwise = True #sets Clockwise variable to true so the program knows which direction the car is moving in
             print("Clockwise")
@@ -307,7 +306,7 @@ while True: #main program loop
         else:
             derivative = error-prev_error #the derivative is the difference between the previous error and the current error, the derivative value is used to smoothen the wall following
         
-        kp = 0.005 #kp is the value we apply to the proportional error which converts the difference into an angle
+        kp = 0.0055 #kp is the value we apply to the proportional error which converts the difference into an angle #0.005
         kd = 0.0040 #kd is the value we apply to the derivative error which helps the oscillation problem with only using proportional error
         
         steering = int((kp * error) + (kd * derivative)) #the steering angle is calculated by multiplying kp by the error and kd by the derivative error
@@ -364,12 +363,15 @@ while True: #main program loop
     if (count == 12): #end when see the upcoming line on ground
         FinalFrame+=1 #adds 1 to how long it needs to wait until it ends
             
-        if(FinalFrame > 85):  #stops car after it has run 85 frames to make sure it ends at the correct place
-            sendnum = str(1500)#stops car
-            ser.write((sendnum + "\n").encode('utf-8'))
-            sendnum = str(2098)#straightens wheels
-            ser.write((sendnum + "\n").encode('utf-8'))
-            break #breaks out of program           
+        if(FinalFrame > 150):  #stops car after it has run 150 frames to make sure it ends at the correct place
+            sendnum = int(sendnum)
+            if(sendnum > 2092 and sendnum < 2104): #stops the car if it is straight enough
+                sleep(0.5)
+                sendnum = str(1500)#stops car
+                ser.write((sendnum + "\n").encode('utf-8'))
+                sendnum = str(2098)#straightens wheels
+                ser.write((sendnum + "\n").encode('utf-8'))
+                break #breaks out of program           
     
     if cv2.waitKey(1)==ord('q'):#wait until key ‘q’ pressed
         sendnum = str(1500)#stops car

@@ -20,9 +20,11 @@ picam2.start()
 
 lower_black = np.array([0,0,0])#lower threshold values for black contour detection
 
-#upper_black = np.array([140,255,40])  #home threshold
+upper_black = np.array([140,255,40])  #home threshold
 
-upper_black = np.array([160,255,50]) #(away threshold) upper threshold values for black contour detection
+#upper_black = np.array([160,255,50]) #(away threshold) upper threshold values for black contour detection
+
+
 #upper_black = np.array([120,255,40])
 
 derivative = -1 #derivative variable for smooth lane follow, will be used when the program is run
@@ -67,6 +69,8 @@ Last_Pillar = "" #string variable that tracks the last seen pillar colour (mainl
 
 if_turnaround = True #if the program should proceed with switching the direction, (set to false if the last pillar of the 2nd lap is green)
 
+pillar_frames = 0 #frame counter to prevent detection of the first pillar of the next straight section during the turn
+
 if __name__ == '__main__':
     
     GPIO.setwarnings(False)#setup for the push buton to start the car
@@ -86,7 +90,7 @@ while True: #loop ends only when button is pressed which lets the program begin
 
 sleep(1)
 
-sendnum=1384#starts moving the car forwards (mat 1384)
+sendnum=1395#starts moving the car forwards (mat 1395)
 sendnum = str(sendnum) #converts the number to a string so that it can be sent
 ser.write((sendnum + "\n").encode('utf-8')) #sends the command to the arduino to be processed there
 
@@ -116,9 +120,9 @@ while True:
     L_subimage = im[265:390, 5:185] #Subimage that is analyzed to find the left wall
     R_subimage = im[265:390, 460:635] #Subimage that is analyzed to find the right wall
     
-    M_subimage = im[217:420, 140:515]  #Subimage that is analyzed to find the pillars
+    M_subimage = im[225:420, 142:515]  #Subimage that is analyzed to find the pillars #was im[218:420, 140:515]
     turn_subimage = im[285:315, 190:470] #Subimage that is analyzed to find the lines on the floor
-    back_wall = im[220:280, 165:500] #Subimage that is analyzed to find the back wall
+    back_wall = im[220:280, 165:500] #Subimage that is analyzed to find the approaching wall in the front
     
     #commented code below displays regions of interest borders and is for debugging and fixing errors in the algorithm
     # Using cv2.line() method to draw a yellow line with thickness of 4 px
@@ -229,7 +233,7 @@ while True:
         
     
     turn_imgHSV = cv2.cvtColor(turn_subimage, cv2.COLOR_BGR2HSV)#converts the turning region of interest that looks for lines into HSV colour format
-    lower_blue = np.array([100, 150, 0], np.uint8) #away (lower threshold for blue line colour)
+    lower_blue = np.array([100, 140, 0], np.uint8) #away (lower threshold for blue line colour) #was [100, 150, 0]
     #lower_blue = np.array([100, 120, 0], np.uint8) #home
     upper_blue = np.array([140, 255, 255], np.uint8) #(upper threshold for blue line colour)
     maskb = cv2.inRange(turn_imgHSV, lower_blue, upper_blue) #mask to filter everything out but the blue colour of the line
@@ -247,7 +251,7 @@ while True:
                 BMaxA = area
                 BMaxI = i 
         
-        if (BMaxA > 300):
+        if (BMaxA > 200): #was 300
             """
             B_cnt = blue_contours[BMaxI]
             area = cv2.contourArea(B_cnt)
@@ -283,7 +287,7 @@ while True:
                 OMaxA = area
                 OMaxI = i 
         
-        if (OMaxA > 300):
+        if (OMaxA > 200): #was 300
             """
             O_cnt = orange_contours[OMaxI]
             area = cv2.contourArea(O_cnt)
@@ -319,7 +323,7 @@ while True:
     
     #lower_green = np.array([50,115,27])
     #upper_green = np.array([100,255,255])
-    lower_green = np.array([50,120,20])
+    lower_green = np.array([50,110,20]) #was 120
     upper_green = np.array([95,255,255])
     mask = cv2.inRange(M_imgHSV, lower_green, upper_green)
     
@@ -417,12 +421,16 @@ while True:
     
     #cv2.imshow("Camera", im)
     
-    if(blue_line_a > 300): #counting counterclockwise movement (detect blue line for turns)
+    pillar_frames+=1
+    #print(Last_Pillar)
+    
+    if(blue_line_a > 200): #counting counterclockwise movement (detect blue line for turns) #was 300
         if(Clockwise == False and CounterClockwise == False):
             CounterClockwise = True
             print("Counterclockwise")
         if(CounterClockwise):
             TurnFrameCount+=1
+            pillar_frames = 0
             
         Blue_Seen = True
         Orange_Seen = False
@@ -434,13 +442,14 @@ while True:
             print(count)
             
             
-    if(orange_line_a > 300):#counting clockwise movement (detect orange line for turns)
+    if(orange_line_a > 200):#counting clockwise movement (detect orange line for turns) #was 300
         if(Clockwise == False and CounterClockwise == False):
             Clockwise = True
             print("Clockwise")
         if(Clockwise):
             TurnFrameCount+=1
-        
+            pillar_frames = 0
+            
         Orange_Seen = True
         Blue_Seen = False
         
@@ -449,10 +458,8 @@ while True:
             TurnFrameCount=0
             count+=1
             print(count)
-     
-     
-    #print(Last_Pillar)
-            
+    
+
     #Section below runs if the car needs to switch drection, (if it's the end of the 2nd lap and the last pillar seen was red)
     if(count == 8 and Last_Pillar == "red" and if_turnaround):
 
@@ -462,60 +469,59 @@ while True:
             Clockwise = False
             CounterClockwise = True
             
-            sendnum = str(1384)
+            sendnum = str(1395) #was all 1384
             ser.write((sendnum + "\n").encode('utf-8')) 
             sendnum = str(2144)
             ser.write((sendnum + "\n").encode('utf-8'))
-            sleep(3.5)
+            sleep(3.7) #was 3.5
             
-            sendnum = str(1572)
+            sendnum = str(1590) #was 1585 / 1580
             ser.write((sendnum + "\n").encode('utf-8'))
             sendnum = str(2060)
             ser.write((sendnum + "\n").encode('utf-8'))
-            sleep(2.2)
+            sleep(2.2) #was 2.2
             
-            sendnum = str(1384)
+            sendnum = str(1395) #was 84
             ser.write((sendnum + "\n").encode('utf-8')) 
             sendnum = str(2082)
             ser.write((sendnum + "\n").encode('utf-8'))
-            sleep(1)
+            sleep(1) # was 1
              
-            sendnum = str(2126)
+            sendnum = str(2132) #was 2126
             ser.write((sendnum + "\n").encode('utf-8'))
-            sleep(2.8)
+            sleep(2.3) #was 2.8 / 2.6
         
         elif(CounterClockwise): 
             Clockwise = True
             CounterClockwise = False
             
-            sendnum = str(1384)
+            sendnum = str(1395) #was 1384
             ser.write((sendnum + "\n").encode('utf-8'))
             sendnum = str(2072)
             ser.write((sendnum + "\n").encode('utf-8'))
-            sleep(1.2)
+            sleep(1) #was 1.2
             
-            sendnum = str(1383)
             ser.write((sendnum + "\n").encode('utf-8'))
             sendnum = str(2144)
             ser.write((sendnum + "\n").encode('utf-8'))
-            sleep(2)
+            sleep(2.3) #was 2.0
             
-            sendnum = str(1572)
+            sendnum = str(1590) #was 1572 / 1585
             ser.write((sendnum + "\n").encode('utf-8'))
             sendnum = str(2062)
             ser.write((sendnum + "\n").encode('utf-8'))
-            sleep(2.2)
+            sleep(2) #was 2.2
             
-            sendnum = str(1384) #was all 1380
+            sendnum = str(1395) #was all 1395
             ser.write((sendnum + "\n").encode('utf-8'))
-            sendnum = str(2120)
+            sendnum = str(2122) #was 2120
             ser.write((sendnum + "\n").encode('utf-8'))
-            sleep(3.4) #was 3.4
+            sleep(3.2) #was 3.4
         
         TurnFrameCount=0
         count+=1
         
-        sendnum=1384#starts moving the car forwards (mat 1382)
+        sendnum=1395#starts moving the car forwards (mat 1395)
         sendnum = str(sendnum)
         ser.write((sendnum + "\n").encode('utf-8'))
     
@@ -544,29 +550,30 @@ while True:
         elif (steering < -30):
             steering = -30
         
+        #sharp steering if wall is not detected on one or both sides
         if(Clockwise == False and CounterClockwise == False):
             if(Last_Pillar == "green"):
-                steering = 38
+                steering = 40 #was all 38
             elif(Last_Pillar == "red"):
-                steering = -38
+                steering = -40
             
         if(Clockwise):
             if (right_lane_a <= 80): 
                 steering = 38
             elif (left_lane_a <= 80):
-                steering = -38
+                steering = -40
         
         if(CounterClockwise):
             if (left_lane_a <= 80):
-                steering = -38
+                steering = -40 #was 38
             elif (right_lane_a <= 80):  
-                steering = 38
+                steering = 40 # was 38
         
         sendnum = angle-steering # Greater Than 2100 = to left | Less than 2100 = to the right 
         
         prev_error = error
     
-    #BACK WALL DETECTION (turn sharp one way if the back wall is very close after passing an obstacle to not crash into the wall
+    #BACK WALL DETECTION (turn sharp one way if the approaching wall is very close after passing an obstacle to not crash into the wall
     if(Back_wall_a > 9700):
         #print(Back_wall_a)
         
@@ -574,11 +581,11 @@ while True:
             sendnum = 2058
         
         if(CounterClockwise and Last_Pillar == "red"):
-            sendnum = 2138
+            sendnum = 2136 #was 2138
     
     
     #RED PILLAR DETECTION (and maneuvering for red pillars)
-    if (red_pillar_area >= 150): #movement for detection of red pillar
+    if (red_pillar_area >= 150 and pillar_frames > 15): #movement for detection of red pillar
         #print("red pillar area: ", red_pillar_area)
         if(green_pillar_area >= 150):
             if(red_y > green_y):
@@ -595,7 +602,8 @@ while True:
                 else:
                     sendnum = 2058
                 
-                Last_Pillar = "red"
+                if(pillar_frames > 30):
+                    Last_Pillar = "red"
                  
         else:
             if(red_pillar_area <= 750):
@@ -611,11 +619,12 @@ while True:
             else:
                 sendnum = 2058   
             
-            Last_Pillar = "red"
+            if(pillar_frames > 30):
+                Last_Pillar = "red"
     
     
     #GREEN PILLAR DETECTION (and maneuvering for green pillars)
-    if (green_pillar_area >= 150): #movement for detection of green pillar
+    if (green_pillar_area >= 150 and pillar_frames > 15): #movement for detection of green pillar
         #print("green pillar area: ", green_pillar_area)       
         if(red_pillar_area >= 150):
             if(green_y > red_y):
@@ -624,7 +633,7 @@ while True:
                 elif(green_pillar_area <= 1500):
                     sendnum = 2130
                 elif(green_pillar_area <= 2000):
-                    sendnum = 2134
+                    sendnum = 2134 #was 2134
                 elif(green_pillar_area <= 2500):
                     sendnum = 2138
                 elif(green_pillar_area <= 3000):
@@ -634,7 +643,8 @@ while True:
                 else:
                     sendnum = 2150
                 
-                Last_Pillar = "green"
+                if(pillar_frames > 30):
+                    Last_Pillar = "green"
                 
         else:
             if(green_pillar_area <= 750):
@@ -652,7 +662,8 @@ while True:
             else:
                 sendnum = 2150
                 
-            Last_Pillar = "green"
+            if(pillar_frames > 30):    
+                Last_Pillar = "green"
      
     #Sends the angle command to the arduino
             
@@ -665,7 +676,7 @@ while True:
     if (count == 12): #end when see the upcoming line on ground
         FinalFrame+=1
            
-        if(FinalFrame > 325):#stops car after it has run 300 frames to make sure it ends at the correct place
+        if(FinalFrame > 370):#stops car after it has run 370 frames to make sure it ends at the correct place
             sendnum = str(1500)#stops car
             ser.write((sendnum + "\n").encode('utf-8'))
             sendnum = str(2098)
