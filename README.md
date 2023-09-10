@@ -68,22 +68,22 @@ Traxxas La Trax Rally Racer Kit 1/18 4WD:
 Sturdy chassis that fits the dimensions, along with being lightweight. This served as the base for our vehicle which we could build around. Moreover, it comes with a bumper which proved beneficial during test runs as it prevented damage to our vehicle. 
 
 Gikfun Uno R3 Case for Arduino:
-Case for our Arduino which we used for easy attachment onto the vehicle. Also protects the arduino from getting damaged.
+Case for our Arduino which we used for easy attachment onto the vehicle. Also protects the Arduino from getting damaged.
 
 RC Car Motor ESC Combo:
-Brushless motor for greater energy efficiency sincer there aren't any brushes creating friction and losing energy. Additionally, the brushless motor will have better speed and higher torque resulting in quicker turning capability and efficiency of our robot. Moreover, the brushless motor allows us to have better control of the speed of our robot over the original brushed motor that the chassis came with. 
+Brushless motor for greater energy efficiency since there aren't any brushes creating friction and losing energy. Additionally, the brushless motor will have better speed and higher torque resulting in quicker turning capability and greater efficiency for our robot. Moreover, the brushless motor allows us to have better control of the speed of our robot over the original brushed motor that the chassis came with. 
 
 Raspberry Pi Wide Angle Camera Module:
-For our needs the best camera that is compatible with Raspberry Pi with great colour quality and high fps which is great for our color lane detection system. Used to detect walls and obstacles for both the open and obstacle challenges.  
+This is the best camera that is compatible with Raspberry Pi for us, having great colour quality and high fps which is important for our color lane detection system. It is used to detect walls and obstacles for both the open and obstacle challenges.  
 
 Pisugar S Pro Portable 5000 mAh UPS Lithium Battery Power Module:
 Battery pack for Raspberry Pi which includes a push button for the challenge. 
 
 Raspberry Pi Model 4:
-Serves as the brain of the robot. The code on the raspberry pi does the image processing and sends the control signals to the arduino. Most of the coding is done on the raspberry pi. 
+Serves as the brain of the robot. The code on the Raspberry Pi does the image processing and sends the control signals to the Arduino. Most of the coding is done on the Raspberry Pi. 
 
 DKARDU Rocker Switch 4 Pins 2 Position ON/Off Red LED Light Illuminated DPST Switch:
-Switch to turn on the Raspberry Pi and electronic speed controller with one switch
+Switch to turn on the Raspberry Pi and electronic speed controller with one switch.
 
 CERRXIAN 90 Degree USB A to USB B Printer Cable:
 90-degree cables to replace the old protruding wires which collided with obstacles.   
@@ -93,7 +93,7 @@ Battery for motor to keep the vehicle in function.
 
 ## Build Process
 
-First off, we started our process by purchasing the Traxxas LaTrax Rally ⅛ 4WD RTR Rally Racer kit. Upon its arrival, we took off the cover and decided to make modifications. The first change we made was replacing the original motor with the 2435 Brushless 4500KV Motor. This ensured that our car would be powerful and precise enough to perform in the competition. Additionally, the brushless DC motor would not deteriorate like the brushed DC motor. Throughout the process of changing the motor, we had to replace the original electronic speed controller with the new compatible electronic speed controller and remove the radio receiver. Since we needed a way to supply power to the servo, connect the signal cables from the Arduino to the servo motor and DC motor, and grounding the DC motor and servo motor, we made a plug-in chip with soldered connections which we used to connect the signal wires, power wires, and ground wires to the servo motor and DC motor. Next, we made many prototypes for the vehicle base, and camera mount using cardboard and black duct tape. After coming up with the perfect design, we made it sturdy for the final product. A cut clipboard for a base to hold the car’s parts. This was suspended by four, one cm standoffs screwed to the chassis plate. We also made the camera mount out of Lego because it was lightweight and sturdy. The lego was glued together at the end to ensure stability and sturdiness. Afterwards, we screwed our camera into the mount and positioned it so it could detect as much as possible, including the ground and walls. Then we attached the arduino and the raspberry pi onto the base clipboard of the robot. The last thing we had to do was connect all the wires to their respective ports and manage them properly using electrical tape and zip-ties to prevent them from protruding, this in turn helped to keep our robot compact and organized.
+First off, we started our process by purchasing the Traxxas LaTrax Rally ⅛ 4WD RTR Rally Racer kit. Upon its arrival, we took off the cover and decided to make modifications. The first change we made was replacing the original motor with the 2435 Brushless 4500KV Motor. This ensured that our car would be powerful and precise enough to perform in the competition. Additionally, the brushless DC motor would not deteriorate like the brushed DC motor. Throughout the process of changing the motor, we had to replace the original electronic speed controller with the new compatible electronic speed controller and remove the radio receiver. Since we needed a way to supply power to the servo, connect the signal cables from the Arduino to the servo motor and DC motor, and grounding the DC motor and servo motor, we made a plug-in chip with soldered connections which we used to connect the signal wires, power wires, and ground wires to the servo and DC motors. Next, we made many prototypes for the vehicle base, and a camera mount using cardboard and black duct tape. After coming up with the perfect design, we made it sturdy for the final product. A cut clipboard for a base to hold the car’s parts. This was suspended by four, one cm standoffs screwed to the chassis plate. We also made the camera mount out of Lego because it was lightweight and sturdy. The lego was glued together at the end to ensure stability and sturdiness. Afterwards, we screwed our camera into the mount and positioned it so it could detect as much as possible, including the ground and walls. Then we attached the Arduino and the Raspberry Pi onto the base clipboard of the robot. The last thing we had to do was connect all the wires to their respective ports and manage them properly using electrical tape and zip-ties to prevent them from protruding. This in turn helped to keep our robot compact and organized.
 
 ## Overview of Code.
 
