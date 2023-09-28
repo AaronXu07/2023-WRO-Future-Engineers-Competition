@@ -1,5 +1,8 @@
 #include <Servo.h>
 
+#define MAX_SIGNAL 2000
+#define MIN_SIGNAL 1000
+
 Servo esc;
 Servo ser;
 int led = 13;
@@ -15,14 +18,17 @@ void setup(){
   ser.attach(9); //blue wire is servo
   ser.write(98);
   esc.attach(10); //white wire is motor
-  esc.writeMicroseconds(1500);
 
+  esc.writeMicroseconds(1500);
   digitalWrite(led, HIGH);
   delay(6000);//mandatory delay waiting for motor to be ready
   digitalWrite(led, LOW);
+
+  esc.writeMicroseconds(1500);
 }
 
 void loop() {
+
   while(Serial.available() > 0) {
 
 
