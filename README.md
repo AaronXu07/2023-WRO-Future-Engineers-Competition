@@ -96,15 +96,19 @@ CERRXIAN 90 Degree USB A to USB B Printer Cable:
 Hosim 2pcs 7.4V 1600mAh 25C T Connector Replacement Rechargable Battery:
 Battery for motor to keep the vehicle in function.
 
+----
+
 ## Build Process
 
 First off, we started our process by purchasing the Traxxas LaTrax Rally ⅛ 4WD RTR Rally Racer kit. Upon its arrival, we took off the cover and decided to make modifications. The first change we made was replacing the original motor with the 2435 Brushless 4500KV Motor. This ensured that our car would be powerful and precise enough to perform in the competition. Additionally, the brushless DC motor would not deteriorate like the brushed DC motor. Throughout the process of changing the motor, we had to replace the original electronic speed controller with the new compatible electronic speed controller and remove the radio receiver. Since we needed a way to supply power to the servo, connect the signal cables from the Arduino to the servo motor and DC motor, and grounding the DC motor and servo motor, we made a plug-in chip with soldered connections which we used to connect the signal wires, power wires, and ground wires to the servo and DC motors. Next, we made many prototypes for the vehicle base, and a camera mount using cardboard and black duct tape. After coming up with the perfect design, we made it sturdy for the final product. A cut clipboard for a base to hold the car’s parts. This was suspended by four, one cm standoffs screwed to the chassis plate. We also made the camera mount out of Lego because it was lightweight and sturdy. The lego was glued together at the end to ensure stability and sturdiness. Afterwards, we screwed our camera into the mount and positioned it so it could detect as much as possible, including the ground and walls. Then we attached the Arduino and the Raspberry Pi onto the base clipboard of the robot. The last thing we had to do was connect all the wires to their respective ports and manage them properly using electrical tape and zip-ties to prevent them from protruding. This in turn helped to keep our robot compact and organized.
+
+----
 
 ## Overview of Code.
 
 To complete the open and obstacle challenges, we needed to program computer vision in order to maneuver the course. This was done on the Raspberry Pi. The Raspberry Pi then sends number commands to the Arduino, which in turn controls the DC motor speed and steering. The Arduino code is coded in c++ and receives a number from the Raspberry Pi. This number dictates what action the Arduino should perform: a signal of 1500 is a complete stop, under 1500 is forward, over 1500 is backward, and the number over 2000 is the angle at which the servo must steer. We used a variety of libraries on the Raspberry Pi. Most notably, we used OpenCV (cv2) for camera operations, Time for time-related functions, Picamera2 for controlling the Raspberry Pi camera, Serial for communication with an Arduino, Numpy for array processing, and RPi.GPIO for handling a push-button to start the car.
 
-
+----
 
 ## Open Challenge Code
 
@@ -122,6 +126,7 @@ Below are the steps in order of the program logic for the Open Challenge:
    
 6. **Main Loop:** The main loop captures and processes frames from the camera. There are six notable sections of the Main Loop: Image Processing, Contour Detection, Wall Following, Counting Turns, Sending Commands, and Termination. In the Image Processing section, the program processes the captured image to detect black contours in the left and right regions of interest (ROI), as well as colored lines (blue and orange) on the ground (bottom region of interest). In the Contour Detection section, the program uses contour detection to detect the largest black contours on the left and right sides of the image, and the blue and orange lines on the ground. In the Wall Following section, depending on the detected contours and lines, the code adjusts the car's steering angle to either follow walls or make turns. The program uses PD (Proportional-Derivative) steering control for the wall following. The proportional part of PD steering control measures the current error between the desired position and the actual position of a system. The proportional part of PD control calculates an output signal based on the magnitude of this error. The output signal is directly proportional to the error, which means that the larger the error, the larger the control signal. The derivative part of PD control takes into account the rate of change of the error. This part helps in damping oscillations due to inertia and improves the system's ability to adapt to sudden changes or disturbances. When the robot vehicle reaches a corner turn marked by the orange or blue lines on the mat, the program disables the PD control and does a sharp turn. The program knows which way to turn based on the color of the line it first sees. In the Counting Turns section, the number of turns made by the car is counted using the  detected lines. Twelve turns are counted in total, resulting in three laps. The Sending Commands section instructs the car's movement and steering by sending control commands to the Arduino. Lastly, in the Termination section, the program ends and the car stops when the total amount of turns has been completed.
 
+----
 
 ## Obstacle Challenge Code
 
@@ -139,9 +144,16 @@ Below are the steps in order of the program logic for the Obstacle Challenge. No
 
 6. **Main Loop:** The main loop captures and processes frames from the camera.  There are eight notable sections of the Main Loop: Image Processing, Contour Detection, Counting Turns, Checking to Switch Direction, Wall Following, Maneuvering Obstacles, Sending Commands, and Termination. In the Image Processing section, similar to the open challenge, the program processes the captured image to detect black contours on the left and right regions of interests (ROI), as well as colored lines (blue and orange) on the ground (bottom region of interest). However, it also has a large region of interest in the middle for detecting green and red obstacles, and a region of interest near the top middle for detecting the wall in front. In the Contour Detection section, the program uses contour detection with thresholding to find the largest black contours (walls) on the left and right sides of the image, largest blue and orange contours (lines) on the ground, largest red and green contours (pillars) in the middle, and the largest black contour in the middle (approaching wall). In the Counting Turns section, the number of turns made by the car is counted using the detected lines. It counts twelve turns in total, resulting in three laps. In the Checking to Switch Direction section, the program checks to see if the last pillar of the second lap is red. If so, the car must turn around. This is done by observing the color of the last seen pillar when approaching the 8th turn. If this pillar is red, a predetermined set of movements (3 point turn) will be performed to turn the car 180 degrees. 1 will also be added to the amount of total turns, and to compensate, the vehicle will do one less turn in order to return to the starting section. If the pillar is green, the car will proceed in the same direction. The Wall Following the section is the same as the open challenge: the program follows the middle of the walls using Proportional-Derivative (PD) steering control. If a pillar is detected, the Maneuvering Obstacles section overwrites the commands of the Wall Following section with commands to avoid the pillar. Like the PD steering, the greater the area of the pillar, the greater the steering angle will be.  The program sends a command to steer right to avoid red pillars, and left to avoid green pillars. If the vehicle gets too close to the front wall from navigating a pillar, the program will send a command to turn sharply in a direction based on the color of the avoided pillar. The Sending Commands section and the Termination Section of the Obstacle Challenge Main Loop both work the exact same way as in the open challenge. 
 
+
+----
+
+
 ## Process to build/compile/upload the code to the Raspberry Pi
 Both  the open challenge and obstacle challenge were coded in Python directly on the Raspberry Pi and saved in the Raspberry Pi. For the competition, the code must run right after booting up the Raspberry Pi, without a connected monitor. We solved this issue by adding commands to run the python program in the rc.local file.
 
+
+----
+
+
 ## Process to build/compile/upload the code to the Arduino
 The Arduino code was coded on the Arduino IDE using a desktop computer. The code was uploaded onto the Arduino using the USB A to B connection cable. Since the Arduino memorizes the uploaded code, this process only needs to be done once. After the code has been uploaded onto the arduino, we connect it to the Raspberry Pi using the same cable. When the Raspberry Pi code runs from startup and the serial port opens, the Arduino code will compile from the beginning and continue to run until the power is shut off. 
-
