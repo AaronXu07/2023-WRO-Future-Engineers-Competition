@@ -54,6 +54,11 @@ https://www.amazon.com/CERRXIAN-1FT-USB-Cable/dp/B0B74F2YYZ
 Hosim 2pcs 7.4V 1600mAh 25C T Connector Replacement Rechargable Battery:
 https://www.amazon.ca/Hosim-2pcs-1600mAh-Connector-Li-Polymer/dp/B098QSLJKV/ref=sr_1_1?crid=3V6BDXMLEJUCW&keywords=high+c+rating+lipo&qid=1693796045&sprefix=high+c+rating+lipo%2Caps%2C105&sr=8-1
 
+### Model 2 added parts 
+Mamba Micro X2, 16.8V Waterproof ESC Motor Combo:
+https://www.horizonhobby.com/product/mamba-micro-x2-16.8v-waterproof-esc-with-0808-4100kv-combo/CSE010016901.html
+
+
 ----
 
 
