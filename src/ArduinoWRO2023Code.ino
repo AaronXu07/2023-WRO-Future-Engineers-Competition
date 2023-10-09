@@ -7,6 +7,10 @@ Servo esc;
 Servo ser;
 int led = 13;
 
+int command;
+
+bool start = true;
+
 const int BUFFER_SIZE = 5;
 char buf[BUFFER_SIZE];
 
@@ -19,32 +23,43 @@ void setup(){
   ser.write(98);
   esc.attach(10); //white wire is motor
 
-  esc.writeMicroseconds(1500);
+  
   digitalWrite(led, HIGH);
-  delay(6000);//mandatory delay waiting for motor to be ready
-  digitalWrite(led, LOW);
 
+  /*
+  esc.writeMicroseconds(1000);
+  delay(4000);//mandatory delay waiting for motor to be ready'
+  esc.writeMicroseconds(2000);
+  delay(4000);
   esc.writeMicroseconds(1500);
+  delay(5000);
+  */
 }
 
 void loop() {
 
   while(Serial.available() > 0) {
 
-
     Serial.readBytes(buf, BUFFER_SIZE); //reading command from rasppi
     buf[4] = '\0';
-    int command = atoi(buf);
+    command = atoi(buf);
 
+    if(command == 1500 && start){
+      delay(3000);
+      digitalWrite(led, LOW);
+      start = false;
+    }
     //Serial.println(command);
     
-    if(command <= 2000)
-    {
-      esc.writeMicroseconds(command);
-    }
-    else
-    {
-      ser.write(command - 2000);
+    if(!start){
+      if(command <= 2000)
+      {
+        esc.writeMicroseconds(command);
+      }
+      else
+      {
+        ser.write(command - 2000);
+      }
     }
   }
 }
