@@ -17,10 +17,9 @@ picam2.configure("preview")
 picam2.start()
  
 
-#upper_black = np.array([110,255,30])
 lower_black = np.array([0,0,0]) #lower threshold values for black contour detection
-#upper_black = np.array([100,255,30])#upper threshold values for black contour detection
-upper_black = np.array([160,255,55])
+upper_black = np.array([120,255,30])#away upper threshold values for black contour detection
+#upper_black = np.array([150,255,53]) #was [140,255,53]
 
 derivative = -1 #derivative variable for smooth lane follow, will be used when the program is run
 sendnum = 1500 #send num is the value sent to arduino, 1500 is stop, under 1500 is forward, above 2000 shows the angle
@@ -59,8 +58,14 @@ if __name__ == '__main__':
     ser = serial.Serial('/dev/ttyACM0', 115200, timeout=1) #setup for arduino connection
     ser.flush()
     
-    sleep(8)#delay for arduino to get ready
+    sleep(2.5)#delay for arduino to get ready
     #print("ready")
+
+sendnum=1500#starts moving the car forwards (mat 1395)
+sendnum = str(sendnum) #converts the number to a string so that it can be sent
+ser.write((sendnum + "\n").encode('utf-8')) #sends the command to the arduino to be processed there
+
+sleep(1)
 
 while True: #loop ends only when button is pressed which lets the program begin 
     if GPIO.input(5) == GPIO.LOW:
@@ -69,7 +74,7 @@ while True: #loop ends only when button is pressed which lets the program begin
 
 sleep(1)
 
-sendnum=1395#starts moving the car forwards (home 1360) (mat 1376) #was 90
+sendnum=1360#starts moving the car forwards (home 1360) (mat 1376) #was 90
 sendnum = str(sendnum) #converts the number to a string so that it can be sent
 ser.write((sendnum + "\n").encode('utf-8')) #sends the command to the arduino to be processed there
 
@@ -79,7 +84,7 @@ while True: #main program loop
     im= picam2.capture_array()
     
     #commented code below displays regions of interest borders and is for debugging and fixing errors in the algorithm
-    """
+    
     font = cv2.FONT_HERSHEY_SIMPLEX
     new_frame_time = time.time()
     fps = 1/(new_frame_time-prev_frame_time)
@@ -108,7 +113,7 @@ while True: #main program loop
     im = cv2.line(im, Turn_points[1], Turn_points[2], YELLOW, thickness)
     im = cv2.line(im, Turn_points[2], Turn_points[3], YELLOW, thickness)
     im = cv2.line(im, Turn_points[3], Turn_points[0], YELLOW, thickness)
-    """
+    
 
     #subimages for the left and right regions of interest detecting left and right walls and lines on the ground
     L_subimage = im[230:325, 20:250] 
@@ -141,7 +146,7 @@ while True: #main program loop
                 LeftMaxI = i     
         
         if (LeftMaxA > 20): #if the contour is greater than 20, prevents tiny specs from detecting as the wall
-            """
+            
             L_cnt = L_contours[LeftMaxI]
             area = cv2.contourArea(L_cnt)
             
@@ -149,7 +154,7 @@ while True: #main program loop
             approx=cv2.approxPolyDP(L_cnt, 0.01*cv2.arcLength(L_cnt,True),True)
             x,y,w,h=cv2.boundingRect(approx)
             cv2.rectangle(L_subimage,(x,y),(x+w,y+h),(0,0,255),2)
-            """
+            
             left_lane_a = LeftMaxA #assigns the maximum left contour area to left_lane_a
   
     
@@ -170,7 +175,7 @@ while True: #main program loop
                 RightMaxI = i 
         
         if (RightMaxA > 20): #if the contour is above area of 20 it is used, to prevent tiny specs of black from detecting as a wall
-            """
+            
             R_cnt = R_contours[RightMaxI]
             area = cv2.contourArea(R_cnt)
             
@@ -178,7 +183,7 @@ while True: #main program loop
             approx=cv2.approxPolyDP(R_cnt, 0.01*cv2.arcLength(R_cnt,True),True)
             x,y,w,h=cv2.boundingRect(approx)
             cv2.rectangle(R_subimage,(x,y),(x+w,y+h),(0,0,255),2)
-            """
+            
             right_lane_a = RightMaxA #assigns the largest right contour found to right_lane_a
                     
     
@@ -207,14 +212,14 @@ while True: #main program loop
         
         if (BMaxA > 200): #only uses the largest contour area if it is large enough #was 300
             #commented code below is used to draw contours for debugging
-            """
+            
             B_cnt = blue_contours[BMaxI]
             area = cv2.contourArea(B_cnt)
             #cv2.drawContours(turn_subimage, blue_contours, BMaxI, (0, 255, 0), 2)
             approx=cv2.approxPolyDP(B_cnt, 0.01*cv2.arcLength(B_cnt,True),True)
             x,y,w,h=cv2.boundingRect(approx)
             cv2.rectangle(turn_subimage,(x,y),(x+w,y+h),(255, 255, 255),2)
-            """
+            
             blue_line_a = BMaxA #blue_line_area is the detected blue line area
 
             #print("Blue Line Area = " + str(blue_line_a))        
@@ -242,7 +247,7 @@ while True: #main program loop
         
         if (OMaxA > 200):#only uses the largest contour area if it is large enough #was 300
             #commented code below is used to draw contours for debugging
-            """
+            
             O_cnt = orange_contours[OMaxI]
             area = cv2.contourArea(O_cnt)
             
@@ -250,7 +255,7 @@ while True: #main program loop
             approx=cv2.approxPolyDP(O_cnt, 0.01*cv2.arcLength(O_cnt,True),True)
             x,y,w,h=cv2.boundingRect(approx)
             cv2.rectangle(turn_subimage,(x,y),(x+w,y+h),(255, 255, 255),2)
-            """
+            
             orange_line_a = OMaxA #orange_line_area is the detected orange line area
 
             #print("Orange Line Area = " + str(orange_line_a))        
@@ -363,10 +368,10 @@ while True: #main program loop
     if (count == 12): #end when see the upcoming line on ground
         FinalFrame+=1 #adds 1 to how long it needs to wait until it ends
             
-        if(FinalFrame > 150):  #stops car after it has run 150 frames to make sure it ends at the correct place
+        if(FinalFrame > 65):  #stops car after it has run 120 frames to make sure it ends at the correct place
             sendnum = int(sendnum)
             if(sendnum > 2092 and sendnum < 2104): #stops the car if it is straight enough
-                sleep(0.5)
+                #sleep(0.5)
                 sendnum = str(1500)#stops car
                 ser.write((sendnum + "\n").encode('utf-8'))
                 sendnum = str(2098)#straightens wheels

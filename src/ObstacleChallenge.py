@@ -18,15 +18,6 @@ picam2.preview_configuration.align()
 picam2.configure("preview")
 picam2.start()
 
-lower_black = np.array([0,0,0])#lower threshold values for black contour detection
-
-upper_black = np.array([140,255,40])  #home threshold
-
-#upper_black = np.array([160,255,50]) #(away threshold) upper threshold values for black contour detection
-
-
-#upper_black = np.array([120,255,40])
-
 derivative = -1 #derivative variable for smooth lane follow, will be used when the program is run
 sendnum = 1500 #send num is the value sent to arduino, 1500 is stop, under 1500 is forward, above 2000 shows the angle
 angle = 2098#angle for driving straight, any movements will subtract or add degrees to this angle
@@ -71,6 +62,14 @@ if_turnaround = True #if the program should proceed with switching the direction
 
 pillar_frames = 0 #frame counter to prevent detection of the first pillar of the next straight section during the turn
 
+after_turn = 0 #counts how much time passed after the turn
+
+Left_points = [(5,265), (185,265), (185,390), (5,390)] #left region of interest
+Right_points = [(635,265), (460,265), (460,390), (635,390)] #right region of interest
+Mid_points = [(140, 220), (510, 220), (510, 420), (140, 420)]
+Turn_points = [(190, 365), (470, 365), (470, 395), (190, 395)]
+back_points = [(165, 225), (500, 225), (500, 285), (165, 285)]
+    
 if __name__ == '__main__':
     
     GPIO.setwarnings(False)#setup for the push buton to start the car
@@ -80,8 +79,14 @@ if __name__ == '__main__':
     ser = serial.Serial('/dev/ttyACM0', 115200, timeout=1)#setup for arduino connection
     ser.flush()
     
-    sleep(8)#delay for arduino to get ready
+    sleep(2.5)#delay for arduino to get ready
     #print("ready")
+
+sendnum=1500#starts moving the car forwards (mat 1395)
+sendnum = str(sendnum) #converts the number to a string so that it can be sent
+ser.write((sendnum + "\n").encode('utf-8')) #sends the command to the arduino to be processed there
+
+sleep(1)
 
 while True: #loop ends only when button is pressed which lets the program begin 
     if GPIO.input(5) == GPIO.LOW:
@@ -90,7 +95,7 @@ while True: #loop ends only when button is pressed which lets the program begin
 
 sleep(1)
 
-sendnum=1395#starts moving the car forwards (mat 1395)
+sendnum=1375#starts moving the car forwards (mat 1395)
 sendnum = str(sendnum) #converts the number to a string so that it can be sent
 ser.write((sendnum + "\n").encode('utf-8')) #sends the command to the arduino to be processed there
 
@@ -100,7 +105,7 @@ while True:
     im= picam2.capture_array()
    
     #commented code below displays regions of interest borders and is used for debugging and fixing errors in the algorithm
-    """
+    
     font = cv2.FONT_HERSHEY_SIMPLEX
     new_frame_time = time.time()
     fps = 1/(new_frame_time-prev_frame_time)
@@ -108,20 +113,12 @@ while True:
     fps = int(fps)
     fps = str(fps)
     cv2.putText(im, fps, (8, 70), font, 3, (100, 255, 0), 3, cv2.LINE_AA)
-    
-    Left_points = [(5,265), (185,265), (185,390), (5,390)] #left region of interest
-    Right_points = [(635,265), (460,265), (460,390), (635,390)] #right region of interest
-    
-    Mid_points = [(140, 217), (515, 217), (515, 420), (140, 420)]
-    Turn_points = [(190, 365), (470, 365), (470, 395), (190, 395)]
-    back_points = [(165, 225), (500, 225), (500, 285), (165, 285)]
-    """
 
     L_subimage = im[265:390, 5:185] #Subimage that is analyzed to find the left wall
     R_subimage = im[265:390, 460:635] #Subimage that is analyzed to find the right wall
     
-    M_subimage = im[225:420, 142:515]  #Subimage that is analyzed to find the pillars #was im[218:420, 140:515]
-    turn_subimage = im[285:315, 190:470] #Subimage that is analyzed to find the lines on the floor
+    M_subimage = im[220:420, 130:510]  #Subimage that is analyzed to find the pillars #was im[225:420, 140:510]
+    turn_subimage = im[285:310, 185:465] #Subimage that is analyzed to find the lines on the floor (was im[285:315, 190:470])
     back_wall = im[220:280, 165:500] #Subimage that is analyzed to find the approaching wall in the front
     
     #commented code below displays regions of interest borders and is for debugging and fixing errors in the algorithm
@@ -136,13 +133,13 @@ while True:
     im = cv2.line(im, Right_points[1], Right_points[2], YELLOW, thickness)
     im = cv2.line(im, Right_points[2], Right_points[3], YELLOW, thickness)
     im = cv2.line(im, Right_points[3], Right_points[0], YELLOW, thickness)
-    
+    """
     im = cv2.line(im, Mid_points[0], Mid_points[1], PURPLE, thickness)
     im = cv2.line(im, Mid_points[1], Mid_points[2], PURPLE, thickness)
     im = cv2.line(im, Mid_points[2], Mid_points[3], PURPLE, thickness)
     im = cv2.line(im, Mid_points[3], Mid_points[0], PURPLE, thickness)
     
-    
+    """
     im = cv2.line(im, Turn_points[0], Turn_points[1], YELLOW, thickness)
     im = cv2.line(im, Turn_points[1], Turn_points[2], YELLOW, thickness)
     im = cv2.line(im, Turn_points[2], Turn_points[3], YELLOW, thickness)
@@ -155,6 +152,11 @@ while True:
     im = cv2.line(im, back_points[3], back_points[0], YELLOW, thickness)
     """
     
+    lower_black = np.array([0,0,0])#lower threshold values for black contour detection
+
+    upper_black = np.array([130,255,32])#upper threshold values for black contour detection
+    #was[140,255,53]
+
     #converts the images into HSV colour format to setup conour detection
     L_imgHSV = cv2.cvtColor(L_subimage, cv2.COLOR_BGR2HSV)
     R_imgHSV = cv2.cvtColor(R_subimage, cv2.COLOR_BGR2HSV)
@@ -180,7 +182,7 @@ while True:
                 LeftMaxI = i     
         
         if (LeftMaxA > 20):#if the contour is greater than 20, prevents tiny specs from detecting as the wall
-            """
+            
             L_cnt = L_contours[LeftMaxI]
             area = cv2.contourArea(L_cnt) 
             #cv2.drawContours(L_subimage, L_contours, LeftMaxI, (0, 255, 0), 2)
@@ -188,7 +190,7 @@ while True:
             x,y,w,h=cv2.boundingRect(approx)
             ly=y
             cv2.rectangle(L_subimage,(x,y),(x+w,y+h),(255,255,255),2)
-            """
+            
             
             left_lane_a = LeftMaxA #assigns the maximum left contour area to left_lane_a
             
@@ -212,14 +214,14 @@ while True:
                 RightMaxI = i 
         
         if (RightMaxA > 20):#if the contour is above area of 20 it is used, to prevent tiny specs of black from detecting as a wall
-            """
+            
             R_cnt = R_contours[RightMaxI]
             area = cv2.contourArea(R_cnt)
             #cv2.drawContours(R_subimage, R_contours, RightMaxI, (0, 255, 0), 2)
             approx=cv2.approxPolyDP(R_cnt, 0.01*cv2.arcLength(R_cnt,True),True)
             x,y,w,h=cv2.boundingRect(approx)
             cv2.rectangle(R_subimage,(x,y),(x+w,y+h),(255,255,255),2)
-            """
+            
             
             right_lane_a = RightMaxA #assigns the largest right contour found to right_lane_a
             
@@ -233,8 +235,8 @@ while True:
         
     
     turn_imgHSV = cv2.cvtColor(turn_subimage, cv2.COLOR_BGR2HSV)#converts the turning region of interest that looks for lines into HSV colour format
-    lower_blue = np.array([100, 140, 0], np.uint8) #away (lower threshold for blue line colour) #was [100, 150, 0]
-    #lower_blue = np.array([100, 120, 0], np.uint8) #home
+    #lower_blue = np.array([100, 140, 40], np.uint8) #away (lower threshold for blue line colour) #was [100, 140, 0]
+    lower_blue = np.array([100, 130, 43], np.uint8) #home
     upper_blue = np.array([140, 255, 255], np.uint8) #(upper threshold for blue line colour)
     maskb = cv2.inRange(turn_imgHSV, lower_blue, upper_blue) #mask to filter everything out but the blue colour of the line
     blue_contours = cv2.findContours(maskb, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2] # find blue contours and add them all to the blue_contours array
@@ -251,15 +253,15 @@ while True:
                 BMaxA = area
                 BMaxI = i 
         
-        if (BMaxA > 200): #was 300
-            """
+        if (BMaxA > 100): #was 300
+            
             B_cnt = blue_contours[BMaxI]
             area = cv2.contourArea(B_cnt)
             #cv2.drawContours(turn_subimage, blue_contours, BMaxI, (0, 255, 0), 2)
             approx=cv2.approxPolyDP(B_cnt, 0.01*cv2.arcLength(B_cnt,True),True)
             x,y,w,h=cv2.boundingRect(approx)
             cv2.rectangle(turn_subimage,(x,y),(x+w,y+h),(255, 255, 255),2)
-            """
+            
             blue_line_a = BMaxA
 
             #print("Blue Line Area = " + str(blue_line_a))        
@@ -270,9 +272,8 @@ while True:
     
     #setup for finding orange contours with thresholding
     turn_imgHSV = cv2.cvtColor(turn_subimage, cv2.COLOR_BGR2HSV)
-    #lower_orange = np.array([8, 75, 50], np.uint8) # was [5, 50, 50] away
-    lower_orange = np.array([6, 65, 50], np.uint8) # was [5, 50, 50] home
-    upper_orange = np.array([18, 255, 255], np.uint8)
+    lower_orange = np.array([9, 75, 50], np.uint8) # was [8, 70, 50] home
+    upper_orange = np.array([18, 255, 255], np.uint8) #was 18, 255, 255
     masko = cv2.inRange(turn_imgHSV, lower_orange, upper_orange)
     orange_contours = cv2.findContours(masko, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2] # find blue contours
     
@@ -287,15 +288,15 @@ while True:
                 OMaxA = area
                 OMaxI = i 
         
-        if (OMaxA > 200): #was 300
-            """
+        if (OMaxA > 100): #was 300
+            
             O_cnt = orange_contours[OMaxI]
             area = cv2.contourArea(O_cnt)
             #cv2.drawContours(turn_subimage, orange_contours, OMaxI, (0, 255, 0), 2)
             approx=cv2.approxPolyDP(O_cnt, 0.01*cv2.arcLength(O_cnt,True),True)
             x,y,w,h=cv2.boundingRect(approx)
             cv2.rectangle(turn_subimage,(x,y),(x+w,y+h),(255, 255, 255),2)
-            """
+            
             orange_line_a = OMaxA
 
             #print("Orange Line Area = " + str(orange_line_a))        
@@ -307,18 +308,20 @@ while True:
     #section below finds the red and green pillars and takes note of their area (for manueuvering the obstacles)    
     M_imgHSV = cv2.cvtColor(M_subimage, cv2.COLOR_BGR2HSV) 
     
+    """
     #lower mask (0-10)
     lower_red = np.array([0, 100, 20]) 
     upper_red = np.array([0, 255, 255]) #was ([3, 255, 255])
     mask0 = cv2.inRange(M_imgHSV, lower_red, upper_red)
+    """
     
     #upper mask (170-180)
-    lower_red = np.array([170, 100, 20])
+    lower_red = np.array([172, 110, 35])
     upper_red = np.array([180, 255, 255])
-    mask1 = cv2.inRange(M_imgHSV, lower_red, upper_red)      
-    raw_mask = mask0 | mask1
+    mask = cv2.inRange(M_imgHSV, lower_red, upper_red)      
+    #raw_mask = mask0 | mask1
     
-    red_contours = cv2.findContours(raw_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2] # find red contours
+    red_contours = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2] # find red contours
     
     
     #lower_green = np.array([50,115,27])
@@ -347,7 +350,7 @@ while True:
             #cv2.drawContours(M_subimage, red_contours, RedMaxI, (0, 255, 0), 2)
             approx=cv2.approxPolyDP(Red_cnt, 0.01*cv2.arcLength(Red_cnt,True),True)
             x,y,w,h=cv2.boundingRect(approx)
-            #cv2.rectangle(M_subimage,(x,y),(x+w,y+h),(235, 206, 135),2)
+            cv2.rectangle(M_subimage,(x,y),(x+w,y+h),(235, 206, 135),2)
             
             red_pillar_area = RedMaxA
             red_y = y
@@ -372,7 +375,7 @@ while True:
             #cv2.drawContours(M_subimage, green_contours, GreenMaxI, (0, 255, 0), 2)
             approx=cv2.approxPolyDP(G_cnt, 0.01*cv2.arcLength(G_cnt,True),True)
             x,y,w,h=cv2.boundingRect(approx)
-            #cv2.rectangle(M_subimage,(x,y),(x+w,y+h),(235, 206, 135),2)
+            cv2.rectangle(M_subimage,(x,y),(x+w,y+h),(235, 206, 135),2)
             
             green_pillar_area = GreenMaxA
             green_y = y
@@ -422,9 +425,10 @@ while True:
     #cv2.imshow("Camera", im)
     
     pillar_frames+=1
+    after_turn+=1
     #print(Last_Pillar)
     
-    if(blue_line_a > 200): #counting counterclockwise movement (detect blue line for turns) #was 300
+    if(blue_line_a > 120): #counting counterclockwise movement (detect blue line for turns) #was 300
         if(Clockwise == False and CounterClockwise == False):
             CounterClockwise = True
             print("Counterclockwise")
@@ -436,13 +440,14 @@ while True:
         Orange_Seen = False
     
     elif(CounterClockwise): #adding count on turn
-        if(TurnFrameCount > 3 and count < 12): 
-            TurnFrameCount=0
+        if(TurnFrameCount > 4 and count < 12 and after_turn > 50): 
+            TurnFrameCount = 0
+            after_turn = 0
             count+=1
             print(count)
             
             
-    if(orange_line_a > 200):#counting clockwise movement (detect orange line for turns) #was 300
+    if(orange_line_a > 150):#counting clockwise movement (detect orange line for turns) #was 300
         if(Clockwise == False and CounterClockwise == False):
             Clockwise = True
             print("Clockwise")
@@ -454,8 +459,9 @@ while True:
         Blue_Seen = False
         
     elif(Clockwise): #adding count on turn
-        if(TurnFrameCount > 3 and count < 12): 
-            TurnFrameCount=0
+        if(TurnFrameCount > 4 and count < 12 and after_turn > 50): 
+            TurnFrameCount = 0
+            after_turn = 0
             count+=1
             print(count)
     
@@ -469,59 +475,75 @@ while True:
             Clockwise = False
             CounterClockwise = True
             
-            sendnum = str(1395) #was all 1384
-            ser.write((sendnum + "\n").encode('utf-8')) 
-            sendnum = str(2144)
+            sendnum = str(1380) #was all 1384
+            ser.write((sendnum + "\n").encode('utf-8'))    
+            sendnum = str(2100)
             ser.write((sendnum + "\n").encode('utf-8'))
-            sleep(3.7) #was 3.5
+            sleep(0.5) #was 3.5
             
-            sendnum = str(1590) #was 1585 / 1580
+            sendnum = str(2136)
+            ser.write((sendnum + "\n").encode('utf-8'))
+            sleep(2) #was 3.5
+            
+            sendnum = str(1586) #was 1585 / 1580
             ser.write((sendnum + "\n").encode('utf-8'))
             sendnum = str(2060)
             ser.write((sendnum + "\n").encode('utf-8'))
-            sleep(2.2) #was 2.2
+            sleep(1.5) #was 2.2
             
-            sendnum = str(1395) #was 84
+            sendnum = str(1500) #was 1585 / 1580
+            ser.write((sendnum + "\n").encode('utf-8'))
+            sleep(0.8)
+            
+            sendnum = str(1380) #was 84
             ser.write((sendnum + "\n").encode('utf-8')) 
             sendnum = str(2082)
             ser.write((sendnum + "\n").encode('utf-8'))
-            sleep(1) # was 1
+            sleep(0.6) # was 1
              
             sendnum = str(2132) #was 2126
             ser.write((sendnum + "\n").encode('utf-8'))
-            sleep(2.3) #was 2.8 / 2.6
+            sleep(1.3) #was 2.8 / 2.6
         
         elif(CounterClockwise): 
             Clockwise = True
             CounterClockwise = False
             
-            sendnum = str(1395) #was 1384
+            sendnum = str(1380) #was 1384
             ser.write((sendnum + "\n").encode('utf-8'))
             sendnum = str(2072)
             ser.write((sendnum + "\n").encode('utf-8'))
-            sleep(1) #was 1.2
+            sleep(0.8) #was 1.2
             
             ser.write((sendnum + "\n").encode('utf-8'))
             sendnum = str(2144)
             ser.write((sendnum + "\n").encode('utf-8'))
-            sleep(2.3) #was 2.0
+            sleep(1.8) #was 2.0
             
-            sendnum = str(1590) #was 1572 / 1585
+            sendnum = str(1586) #was 1572 / 1585
             ser.write((sendnum + "\n").encode('utf-8'))
             sendnum = str(2062)
             ser.write((sendnum + "\n").encode('utf-8'))
             sleep(2) #was 2.2
             
-            sendnum = str(1395) #was all 1395
+            sendnum = str(1500) #was 1585 / 1580
             ser.write((sendnum + "\n").encode('utf-8'))
-            sendnum = str(2122) #was 2120
+            sleep(0.8)
+            
+            sendnum = str(1380) #was all 1395
             ser.write((sendnum + "\n").encode('utf-8'))
-            sleep(3.2) #was 3.4
+            sendnum = str(2090) #was 2120
+            ser.write((sendnum + "\n").encode('utf-8'))
+            sleep(0.5)
+            
+            sendnum = str(2120) #was 2120
+            ser.write((sendnum + "\n").encode('utf-8'))
+            sleep(2.4) #was 3.2
         
         TurnFrameCount=0
         count+=1
         
-        sendnum=1395#starts moving the car forwards (mat 1395)
+        sendnum=1375#starts moving the car forwards (mat 1395)
         sendnum = str(sendnum)
         ser.write((sendnum + "\n").encode('utf-8'))
     
@@ -559,13 +581,13 @@ while True:
             
         if(Clockwise):
             if (right_lane_a <= 80): 
-                steering = 38
+                steering = 40
             elif (left_lane_a <= 80):
-                steering = -40
+                steering = -42
         
         if(CounterClockwise):
             if (left_lane_a <= 80):
-                steering = -40 #was 38
+                steering = -44 #was 38
             elif (right_lane_a <= 80):  
                 steering = 40 # was 38
         
@@ -585,53 +607,53 @@ while True:
     
     
     #RED PILLAR DETECTION (and maneuvering for red pillars)
-    if (red_pillar_area >= 150 and pillar_frames > 15): #movement for detection of red pillar
+    if (red_pillar_area >= 150 and pillar_frames > 10): #movement for detection of red pillar
         #print("red pillar area: ", red_pillar_area)
         if(green_pillar_area >= 150):
             if(red_y > green_y):
                 if(red_pillar_area <= 750):
-                    sendnum = 2074
+                    sendnum = 2072 #was 74
                 elif(red_pillar_area <=1500):
-                    sendnum = 2072
+                    sendnum = 2068 #was 72
                 elif(red_pillar_area <=2000):
-                    sendnum = 2070
+                    sendnum = 2066 #was 70
                 elif(red_pillar_area <=3000):
-                    sendnum = 2066
+                    sendnum = 2062 #was 66
                 elif(red_pillar_area <=4000):
-                    sendnum = 2062
+                    sendnum = 2058 #was 62
                 else:
-                    sendnum = 2058
+                    sendnum = 2052 #was 58  
                 
                 if(pillar_frames > 30):
                     Last_Pillar = "red"
                  
         else:
             if(red_pillar_area <= 750):
-                sendnum = 2074
+                sendnum = 2072 #was 74
             elif(red_pillar_area <=1500):
-                sendnum = 2072
+                sendnum = 2068 #was 72
             elif(red_pillar_area <=2000):
-                sendnum = 2070
+                sendnum = 2066 #was 70
             elif(red_pillar_area <=3000):
-                sendnum = 2066
+                sendnum = 2062 #was 66
             elif(red_pillar_area <=4000):
-                sendnum = 2062
+                sendnum = 2058 #was 62
             else:
-                sendnum = 2058   
+                sendnum = 2052 #was 58   
             
             if(pillar_frames > 30):
                 Last_Pillar = "red"
     
     
     #GREEN PILLAR DETECTION (and maneuvering for green pillars)
-    if (green_pillar_area >= 150 and pillar_frames > 15): #movement for detection of green pillar
+    if (green_pillar_area >= 150 and pillar_frames > 10): #movement for detection of green pillar
         #print("green pillar area: ", green_pillar_area)       
         if(red_pillar_area >= 150):
             if(green_y > red_y):
                 if(green_pillar_area <= 750):
-                    sendnum = 2124
+                    sendnum = 2128 #was 2126
                 elif(green_pillar_area <= 1500):
-                    sendnum = 2130
+                    sendnum = 2132 #was 2130
                 elif(green_pillar_area <= 2000):
                     sendnum = 2134 #was 2134
                 elif(green_pillar_area <= 2500):
@@ -648,9 +670,9 @@ while True:
                 
         else:
             if(green_pillar_area <= 750):
-                sendnum = 2124
+                sendnum = 2128 #was 2126
             elif(green_pillar_area <= 1500):
-                sendnum = 2130 
+                sendnum = 2132
             elif(green_pillar_area <= 2000):
                 sendnum = 2134 # was 32
             elif(green_pillar_area <= 2500):
@@ -676,7 +698,7 @@ while True:
     if (count == 12): #end when see the upcoming line on ground
         FinalFrame+=1
            
-        if(FinalFrame > 370):#stops car after it has run 370 frames to make sure it ends at the correct place
+        if(FinalFrame > 200):#stops car after it has run 370 frames to make sure it ends at the correct place
             sendnum = str(1500)#stops car
             ser.write((sendnum + "\n").encode('utf-8'))
             sendnum = str(2098)
