@@ -95,7 +95,7 @@ while True: #loop ends only when button is pressed which lets the program begin
 
 sleep(1)
 
-sendnum=1375#starts moving the car forwards (mat 1395)
+sendnum=1380#starts moving the car forwards (mat 1395)
 sendnum = str(sendnum) #converts the number to a string so that it can be sent
 ser.write((sendnum + "\n").encode('utf-8')) #sends the command to the arduino to be processed there
 
@@ -105,7 +105,7 @@ while True:
     im= picam2.capture_array()
    
     #commented code below displays regions of interest borders and is used for debugging and fixing errors in the algorithm
-    
+    """
     font = cv2.FONT_HERSHEY_SIMPLEX
     new_frame_time = time.time()
     fps = 1/(new_frame_time-prev_frame_time)
@@ -113,7 +113,7 @@ while True:
     fps = int(fps)
     fps = str(fps)
     cv2.putText(im, fps, (8, 70), font, 3, (100, 255, 0), 3, cv2.LINE_AA)
-
+    """
     L_subimage = im[265:390, 5:185] #Subimage that is analyzed to find the left wall
     R_subimage = im[265:390, 460:635] #Subimage that is analyzed to find the right wall
     
@@ -133,13 +133,13 @@ while True:
     im = cv2.line(im, Right_points[1], Right_points[2], YELLOW, thickness)
     im = cv2.line(im, Right_points[2], Right_points[3], YELLOW, thickness)
     im = cv2.line(im, Right_points[3], Right_points[0], YELLOW, thickness)
-    """
+    
     im = cv2.line(im, Mid_points[0], Mid_points[1], PURPLE, thickness)
     im = cv2.line(im, Mid_points[1], Mid_points[2], PURPLE, thickness)
     im = cv2.line(im, Mid_points[2], Mid_points[3], PURPLE, thickness)
     im = cv2.line(im, Mid_points[3], Mid_points[0], PURPLE, thickness)
     
-    """
+    
     im = cv2.line(im, Turn_points[0], Turn_points[1], YELLOW, thickness)
     im = cv2.line(im, Turn_points[1], Turn_points[2], YELLOW, thickness)
     im = cv2.line(im, Turn_points[2], Turn_points[3], YELLOW, thickness)
@@ -440,7 +440,7 @@ while True:
         Orange_Seen = False
     
     elif(CounterClockwise): #adding count on turn
-        if(TurnFrameCount > 4 and count < 12 and after_turn > 50): 
+        if(TurnFrameCount > 4 and count < 12 and after_turn > 80): 
             TurnFrameCount = 0
             after_turn = 0
             count+=1
@@ -459,7 +459,7 @@ while True:
         Blue_Seen = False
         
     elif(Clockwise): #adding count on turn
-        if(TurnFrameCount > 4 and count < 12 and after_turn > 50): 
+        if(TurnFrameCount > 4 and count < 12 and after_turn > 80): 
             TurnFrameCount = 0
             after_turn = 0
             count+=1
@@ -477,13 +477,10 @@ while True:
             
             sendnum = str(1380) #was all 1384
             ser.write((sendnum + "\n").encode('utf-8'))    
-            sendnum = str(2100)
-            ser.write((sendnum + "\n").encode('utf-8'))
-            sleep(0.5) #was 3.5
             
             sendnum = str(2136)
             ser.write((sendnum + "\n").encode('utf-8'))
-            sleep(2) #was 3.5
+            sleep(2) #was 3.5 #was 2
             
             sendnum = str(1586) #was 1585 / 1580
             ser.write((sendnum + "\n").encode('utf-8'))
@@ -497,34 +494,36 @@ while True:
             
             sendnum = str(1380) #was 84
             ser.write((sendnum + "\n").encode('utf-8')) 
-            sendnum = str(2082)
+            sendnum = str(2078)
             ser.write((sendnum + "\n").encode('utf-8'))
-            sleep(0.6) # was 1
-             
-            sendnum = str(2132) #was 2126
+            sleep(0.8) # was 1
+            
+            
+            sendnum = str(2128) #was 2126
             ser.write((sendnum + "\n").encode('utf-8'))
             sleep(1.3) #was 2.8 / 2.6
-        
+            
         elif(CounterClockwise): 
             Clockwise = True
             CounterClockwise = False
             
             sendnum = str(1380) #was 1384
             ser.write((sendnum + "\n").encode('utf-8'))
-            sendnum = str(2072)
+            
+            sendnum = str(2080)
             ser.write((sendnum + "\n").encode('utf-8'))
-            sleep(0.8) #was 1.2
+            sleep(0.5) #was 1.2
             
             ser.write((sendnum + "\n").encode('utf-8'))
             sendnum = str(2144)
             ser.write((sendnum + "\n").encode('utf-8'))
-            sleep(1.8) #was 2.0
+            sleep(1) #was 2.0
             
             sendnum = str(1586) #was 1572 / 1585
             ser.write((sendnum + "\n").encode('utf-8'))
             sendnum = str(2062)
             ser.write((sendnum + "\n").encode('utf-8'))
-            sleep(2) #was 2.2
+            sleep(1.5) #was 2.2
             
             sendnum = str(1500) #was 1585 / 1580
             ser.write((sendnum + "\n").encode('utf-8'))
@@ -534,16 +533,16 @@ while True:
             ser.write((sendnum + "\n").encode('utf-8'))
             sendnum = str(2090) #was 2120
             ser.write((sendnum + "\n").encode('utf-8'))
-            sleep(0.5)
+            sleep(0.4)
             
-            sendnum = str(2120) #was 2120
+            sendnum = str(2122) #was 2120
             ser.write((sendnum + "\n").encode('utf-8'))
-            sleep(2.4) #was 3.2
+            sleep(1.2) #was 3.2
         
         TurnFrameCount=0
         count+=1
         
-        sendnum=1375#starts moving the car forwards (mat 1395)
+        sendnum=1380#starts moving the car forwards (mat 1395)
         sendnum = str(sendnum)
         ser.write((sendnum + "\n").encode('utf-8'))
     
@@ -698,7 +697,7 @@ while True:
     if (count == 12): #end when see the upcoming line on ground
         FinalFrame+=1
            
-        if(FinalFrame > 200):#stops car after it has run 370 frames to make sure it ends at the correct place
+        if(FinalFrame > 190):#stops car after it has run 370 frames to make sure it ends at the correct place
             sendnum = str(1500)#stops car
             ser.write((sendnum + "\n").encode('utf-8'))
             sendnum = str(2098)
@@ -712,4 +711,4 @@ while True:
         sendnum = str(2100)
         ser.write((sendnum + "\n").encode('utf-8'))
         break
-cv2.destroyAllWindows() 
+cv2.destroyAllWindows()
