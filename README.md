@@ -96,11 +96,19 @@ CERRXIAN 90 Degree USB A to USB B Printer Cable:
 Hosim 2pcs 7.4V 1600mAh 25C T Connector Replacement Rechargable Battery:
 Battery for motor to keep the vehicle in function.
 
+### Model 2 added parts 
+Mamba Micro X2, 16.8V Waterproof ESC Motor Combo:
+New and improved motor for our updated model 2. During the national competition we saw that our previous motor was quite inconsistent and was often cogging, especially for the first run off boot. The speed was not only much slower than we expected but also varied depending on the setup and friction of the surface and this significantly affected our open challenge time. After careful further testing and analysis it became evident that our motors accelation was sub-par off boot. This was because kilovoltage was too high, resulting in a lower torque. As a result, we began searching for a motor to solve our problem and decided to pick this motor out as it had the perfect torque for optimal acceleration and top speed. This way our run time became much more consistent, our vehicle could make sharper turns, go slower if needed and run normally without cogging. 
+
 ----
 
 ## Build Process
 
 First off, we started our process by purchasing the Traxxas LaTrax Rally ⅛ 4WD RTR Rally Racer kit. Upon its arrival, we took off the cover and decided to make modifications. The first change we made was replacing the original motor with the 2435 Brushless 4500KV Motor. This ensured that our car would be powerful and precise enough to perform in the competition. Additionally, the brushless DC motor would not deteriorate like the brushed DC motor. Throughout the process of changing the motor, we had to replace the original electronic speed controller with the new compatible electronic speed controller and remove the radio receiver. Since we needed a way to supply power to the servo, connect the signal cables from the Arduino to the servo motor and DC motor, and grounding the DC motor and servo motor, we made a plug-in chip with soldered connections which we used to connect the signal wires, power wires, and ground wires to the servo and DC motors. Next, we made many prototypes for the vehicle base, and a camera mount using cardboard and black duct tape. After coming up with the perfect design, we made it sturdy for the final product. A cut clipboard for a base to hold the car’s parts. This was suspended by four, one cm standoffs screwed to the chassis plate. We also made the camera mount out of Lego because it was lightweight and sturdy. The lego was glued together at the end to ensure stability and sturdiness. Afterwards, we screwed our camera into the mount and positioned it so it could detect as much as possible, including the ground and walls. Then we attached the Arduino and the Raspberry Pi onto the base clipboard of the robot. The last thing we had to do was connect all the wires to their respective ports and manage them properly using electrical tape and zip-ties to prevent them from protruding. This in turn helped to keep our robot compact and organized. Throughout the process we did not end up 3D printing any of our building components and instead chose to use various parts from different products.
+
+## Model 2 Changes
+
+Along with the Dominus Model 2 came a few design changes. First and foremost, during nationals we realized that our camera could not detect for the entire width of our vehicle due to the width of our camera mount. For this reason we decided to remake the camera mount to be 1.5cm skinnier on each side to fit the exact width our camera could detect.  
 
 ----
 
