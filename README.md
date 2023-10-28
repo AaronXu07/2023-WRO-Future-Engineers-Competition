@@ -108,7 +108,7 @@ First off, we started our process by purchasing the Traxxas LaTrax Rally ⅛ 4WD
 
 ## Model 2 Design Changes
 
-Along with the Dominus Model 2 came a few design changes. First and foremost, we removed the old motor and installed the new one into our chassis. This enabled our vehicle to perform sharper turns and run normally without cogging due to the higher torque offered by the new motor[(more info)](###-Model-2-added-parts). Afterwards, we decided to make our vehicle 1.5cm skinnier on each side, since during nationals we discovered that our vehicle was slightly too wide causing maneuvering through obstacles to be an ardous process. As a result, to slim our vehicle down, we decided to rebuild the camera mount, flip our raspberry pi 90 degrees and place the arduino on the back of the camera mount.  
+Along with the Dominus Model 2 came a few design changes. First and foremost, we removed the old motor and installed the new one into our chassis. This enabled our vehicle to perform sharper turns and run normally without cogging due to the higher torque offered by the new motor[(more info)](###-model-2-added-parts). Afterwards, we decided to make our vehicle 1.5cm skinnier on each side, since during nationals we discovered that our vehicle was slightly too wide causing maneuvering through obstacles to be an ardous process. As a result, to slim our vehicle down, we decided to rebuild the camera mount, flip our raspberry pi 90 degrees and place the arduino on the back of the camera mount.  
 
 ----
 
