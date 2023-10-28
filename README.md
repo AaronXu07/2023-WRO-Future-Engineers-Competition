@@ -97,7 +97,7 @@ Hosim 2pcs 7.4V 1600mAh 25C T Connector Replacement Rechargable Battery:
 Battery for motor to keep the vehicle in function.
 
 ### Model 2 added parts 
-Mamba Micro X2, 16.8V Waterproof ESC Motor Combo:
+Mamba Micro X2, 16.8V Waterproof ESC Motor Combo:<br><br>
 New and improved motor for our updated model 2. During the national competition we saw that our previous motor was quite inconsistent and was often cogging, especially for the first run off boot. The speed was not only much slower than we expected but also varied depending on the setup and friction of the surface and this significantly affected our open challenge time. After careful further testing and analysis it became evident that our motors accelation was sub-par off boot. This was because kilovoltage was too high, resulting in a lower torque. As a result, we began searching for a motor to solve our problem and decided to pick this motor out as it had the perfect torque for optimal acceleration and top speed. This way our run time became much more consistent, our vehicle could make sharper turns, go slower if needed and run normally without cogging. 
 
 ----
@@ -108,7 +108,7 @@ First off, we started our process by purchasing the Traxxas LaTrax Rally ⅛ 4WD
 
 ## Model 2 Design Changes
 
-Along with the Dominus Model 2 came a few design changes. First and foremost, we removed the old motor and installed the new one into our chassis. This enabled our vehicle to perform sharper turns and run normally without cogging due to the higher torque offered by the new motor[(more info)](#-model-2-added-parts). Afterwards, we decided to make our vehicle 1.5cm skinnier on each side, since during nationals we discovered that our vehicle was slightly too wide causing maneuvering through obstacles to be an ardous process. As a result, to slim our vehicle down, we decided to rebuild the camera mount, flip our raspberry pi 90 degrees and place the arduino on the back of the camera mount.  
+Along with the Dominus Model 2 came a few design changes. First and foremost, we removed the old motor and installed the new one into our chassis. This enabled our vehicle to perform sharper turns and run normally without cogging due to the higher torque offered by the new motor[(more info)](#model-2-added-parts). Afterwards, we decided to make our vehicle 1.5cm skinnier on each side, since during nationals we discovered that our vehicle was slightly too wide causing maneuvering through obstacles to be an ardous process. As a result, to slim our vehicle down, we decided to rebuild the camera mount, flip our raspberry pi 90 degrees and place the arduino on the back of the camera mount.  
 
 ----
 
