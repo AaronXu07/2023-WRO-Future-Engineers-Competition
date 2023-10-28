@@ -54,7 +54,7 @@ https://www.amazon.com/CERRXIAN-1FT-USB-Cable/dp/B0B74F2YYZ
 Hosim 2pcs 7.4V 1600mAh 25C T Connector Replacement Rechargable Battery:
 https://www.amazon.ca/Hosim-2pcs-1600mAh-Connector-Li-Polymer/dp/B098QSLJKV/ref=sr_1_1?crid=3V6BDXMLEJUCW&keywords=high+c+rating+lipo&qid=1693796045&sprefix=high+c+rating+lipo%2Caps%2C105&sr=8-1
 
-### Model 2 added parts 
+### Model 2 Added Parts Link 
 Mamba Micro X2, 16.8V Waterproof ESC Motor Combo:
 https://www.horizonhobby.com/product/mamba-micro-x2-16.8v-waterproof-esc-with-0808-4100kv-combo/CSE010016901.html
 
@@ -96,7 +96,7 @@ CERRXIAN 90 Degree USB A to USB B Printer Cable:
 Hosim 2pcs 7.4V 1600mAh 25C T Connector Replacement Rechargable Battery:
 Battery for motor to keep the vehicle in function.
 
-### Model 2 added parts 
+### Model 2 Added Parts 
 Mamba Micro X2, 16.8V Waterproof ESC Motor Combo:<br><br>
 New and improved motor for our updated model 2. During the national competition we saw that our previous motor was quite inconsistent and was often cogging, especially for the first run off boot. The speed was not only much slower than we expected but also varied depending on the setup and friction of the surface and this significantly affected our open challenge time. After careful further testing and analysis it became evident that our motors accelation was sub-par off boot. This was because kilovoltage was too high, resulting in a lower torque. As a result, we began searching for a motor to solve our problem and decided to pick this motor out as it had the perfect torque for optimal acceleration and top speed. This way our run time became much more consistent, our vehicle could make sharper turns, go slower if needed and run normally without cogging. 
 
