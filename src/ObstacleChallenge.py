@@ -37,7 +37,6 @@ thickness = 3
 prev_frame_time = 0
 new_frame_time = 0
 
-
 count = 0 #variable which counts how many turns the car has made
 TurnFrameCount = 0#variable that tracks how many frames the turn has lasted to make sure the same turn isnt counted multiple times
 FinalFrame = 0#counts how many frames has passed since the last turn to stop in the correct section
@@ -66,10 +65,22 @@ after_turn = 0 #counts how much time passed after the turn
 
 Left_points = [(5,265), (185,265), (185,390), (5,390)] #left region of interest
 Right_points = [(635,265), (460,265), (460,390), (635,390)] #right region of interest
-Mid_points = [(140, 220), (510, 220), (510, 420), (140, 420)]
+Mid_points = [(140, 217), (510, 217), (510, 420), (140, 420)]
 Turn_points = [(190, 365), (470, 365), (470, 395), (190, 395)]
 back_points = [(165, 225), (500, 225), (500, 285), (165, 285)]
-    
+
+
+left_x = 0
+left_w = 0
+
+right_x = 640
+
+surround_area_L = 0
+surround_area_R = 0
+
+ratio_L = 0
+ratio_R = 0
+
 if __name__ == '__main__':
     
     GPIO.setwarnings(False)#setup for the push buton to start the car
@@ -117,7 +128,7 @@ while True:
     L_subimage = im[265:390, 5:185] #Subimage that is analyzed to find the left wall
     R_subimage = im[265:390, 460:635] #Subimage that is analyzed to find the right wall
     
-    M_subimage = im[220:420, 130:510]  #Subimage that is analyzed to find the pillars #was im[225:420, 140:510]
+    M_subimage = im[217:420, 130:510]  #Subimage that is analyzed to find the pillars #was im[220:420, 130:510]
     turn_subimage = im[285:310, 185:465] #Subimage that is analyzed to find the lines on the floor (was im[285:315, 190:470])
     back_wall = im[220:280, 165:500] #Subimage that is analyzed to find the approaching wall in the front
     
@@ -185,17 +196,17 @@ while True:
             
             L_cnt = L_contours[LeftMaxI]
             area = cv2.contourArea(L_cnt) 
-            #cv2.drawContours(L_subimage, L_contours, LeftMaxI, (0, 255, 0), 2)
+            cv2.drawContours(L_subimage, L_contours, LeftMaxI, (255,255,255), 2)
             approx=cv2.approxPolyDP(L_cnt, 0.01*cv2.arcLength(L_cnt,True),True)
             x,y,w,h=cv2.boundingRect(approx)
             ly=y
-            cv2.rectangle(L_subimage,(x,y),(x+w,y+h),(255,255,255),2)
-            
-            
+            #cv2.rectangle(L_subimage,(x,y),(x+w,y+h),(255,255,255),2)
+              
+            surround_area_L = w*h
+            left_x = x
+            left_w = w
             left_lane_a = LeftMaxA #assigns the maximum left contour area to left_lane_a
             
-            #print("Left Lane Area = " + str(left_lane_a))
-            #print("Number of Left Contours found = " + str(len(L_contours)))  
     
     #right countours
     R_contours = cv2.findContours(R_mask, 
@@ -217,16 +228,15 @@ while True:
             
             R_cnt = R_contours[RightMaxI]
             area = cv2.contourArea(R_cnt)
-            #cv2.drawContours(R_subimage, R_contours, RightMaxI, (0, 255, 0), 2)
+            cv2.drawContours(R_subimage, R_contours, RightMaxI, (255,255,255), 2)
             approx=cv2.approxPolyDP(R_cnt, 0.01*cv2.arcLength(R_cnt,True),True)
             x,y,w,h=cv2.boundingRect(approx)
-            cv2.rectangle(R_subimage,(x,y),(x+w,y+h),(255,255,255),2)
+            #cv2.rectangle(R_subimage,(x,y),(x+w,y+h),(255,255,255),2)       
             
-            
+            surround_area_R = w*h
+            right_x = x
             right_lane_a = RightMaxA #assigns the largest right contour found to right_lane_a
             
-            #print("Right Lane Area = " + str(right_lane_a))        
-            #print("Number of Right Contours found = " + str(len(R_contours)))
     
     if (len(R_contours) == 0 or RightMaxA <= 70):#the right wall area will be set to 0 if no contours are found in the right ROI
         right_lane_a = 0  
@@ -264,8 +274,6 @@ while True:
             
             blue_line_a = BMaxA
 
-            #print("Blue Line Area = " + str(blue_line_a))        
-            #print("Number of red contours found = " + str(len(red_contours)))
                 
     if (len(blue_contours) == 0 or BMaxA <= 70):
         blue_line_a = 0
@@ -299,8 +307,6 @@ while True:
             
             orange_line_a = OMaxA
 
-            #print("Orange Line Area = " + str(orange_line_a))        
-            #print("Number of orange contours found = " + str(len(orange_contours)))
                 
     if (len(orange_contours) == 0 or OMaxA <= 70):
         orange_line_a = 0
@@ -347,16 +353,15 @@ while True:
             
             Red_cnt = red_contours[RedMaxI]
             area = cv2.contourArea(Red_cnt)
-            #cv2.drawContours(M_subimage, red_contours, RedMaxI, (0, 255, 0), 2)
+            cv2.drawContours(M_subimage, red_contours, RedMaxI, (235, 206, 135), 2)
             approx=cv2.approxPolyDP(Red_cnt, 0.01*cv2.arcLength(Red_cnt,True),True)
             x,y,w,h=cv2.boundingRect(approx)
-            cv2.rectangle(M_subimage,(x,y),(x+w,y+h),(235, 206, 135),2)
+            #cv2.rectangle(M_subimage,(x,y),(x+w,y+h),(235, 206, 135),2)
             
             red_pillar_area = RedMaxA
             red_y = y
             red_x = x
-            #print("Red Pillar Area = " + str(red_pillar_area))        
-            #print("Number of red contours found = " + str(len(red_contours)))
+        
     
     GreenMaxA = 0
     GreenMaxI = 0
@@ -372,16 +377,15 @@ while True:
             
             G_cnt = green_contours[GreenMaxI]
             area = cv2.contourArea(G_cnt)
-            #cv2.drawContours(M_subimage, green_contours, GreenMaxI, (0, 255, 0), 2)
+            cv2.drawContours(M_subimage, green_contours, GreenMaxI, (235, 206, 135), 2)
             approx=cv2.approxPolyDP(G_cnt, 0.01*cv2.arcLength(G_cnt,True),True)
             x,y,w,h=cv2.boundingRect(approx)
-            cv2.rectangle(M_subimage,(x,y),(x+w,y+h),(235, 206, 135),2)
+            #cv2.rectangle(M_subimage,(x,y),(x+w,y+h),(235, 206, 135),2)
             
             green_pillar_area = GreenMaxA
             green_y = y
             green_x = x
-            #print("Green Pillar Area = " + str(green_pillar_area))        
-            #print("Number of green contours found = " + str(len(red_contours)))
+           
             
     if (len(red_contours) == 0 or RedMaxA <= 70):
         red_pillar_area = 0
@@ -510,20 +514,20 @@ while True:
             sendnum = str(1380) #was 1384
             ser.write((sendnum + "\n").encode('utf-8'))
             
-            sendnum = str(2080)
+            sendnum = str(2075)
             ser.write((sendnum + "\n").encode('utf-8'))
             sleep(0.5) #was 1.2
             
             ser.write((sendnum + "\n").encode('utf-8'))
             sendnum = str(2144)
             ser.write((sendnum + "\n").encode('utf-8'))
-            sleep(1) #was 2.0
+            sleep(1.2) #was 2.0
             
             sendnum = str(1586) #was 1572 / 1585
             ser.write((sendnum + "\n").encode('utf-8'))
-            sendnum = str(2062)
+            sendnum = str(2060)
             ser.write((sendnum + "\n").encode('utf-8'))
-            sleep(1.5) #was 2.2
+            sleep(1.6) #was 2.2
             
             sendnum = str(1500) #was 1585 / 1580
             ser.write((sendnum + "\n").encode('utf-8'))
@@ -533,9 +537,9 @@ while True:
             ser.write((sendnum + "\n").encode('utf-8'))
             sendnum = str(2090) #was 2120
             ser.write((sendnum + "\n").encode('utf-8'))
-            sleep(0.4)
+            sleep(0.5)
             
-            sendnum = str(2122) #was 2120
+            sendnum = str(2128) #was 2120
             ser.write((sendnum + "\n").encode('utf-8'))
             sleep(1.2) #was 3.2
         
@@ -549,7 +553,21 @@ while True:
     #makes sure it does not turn around if the last pillar was green
     elif(count == 8 and Last_Pillar == "green" and if_turnaround):
         if_turnaround = False
+     
+     
+    if(left_lane_a > 0 and right_lane_a > 0):
+        ratio_L =(surround_area_L / left_lane_a)
+        ratio_R =(surround_area_R / right_lane_a)
+    else:
+        ratio_L = 0
+        ratio_R = 0
         
+    if(ratio_L > 5):
+        left_lane_a = 0
+        
+    if(ratio_R > 5):
+        right_lane_a = 0
+    
     
     #WALL FOLLOWING       
     if (right_lane_a >= 0 and left_lane_a >= 0): #wall following only
