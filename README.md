@@ -54,7 +54,7 @@ https://www.amazon.com/CERRXIAN-1FT-USB-Cable/dp/B0B74F2YYZ
 Hosim 2pcs 7.4V 1600mAh 25C T Connector Replacement Rechargable Battery:
 https://www.amazon.ca/Hosim-2pcs-1600mAh-Connector-Li-Polymer/dp/B098QSLJKV/ref=sr_1_1?crid=3V6BDXMLEJUCW&keywords=high+c+rating+lipo&qid=1693796045&sprefix=high+c+rating+lipo%2Caps%2C105&sr=8-1
 
-### Model 2 added parts 
+### Model 2 Added Parts Link 
 Mamba Micro X2, 16.8V Waterproof ESC Motor Combo:
 https://www.horizonhobby.com/product/mamba-micro-x2-16.8v-waterproof-esc-with-0808-4100kv-combo/CSE010016901.html
 
@@ -96,8 +96,8 @@ CERRXIAN 90 Degree USB A to USB B Printer Cable:
 Hosim 2pcs 7.4V 1600mAh 25C T Connector Replacement Rechargable Battery:
 Battery for motor to keep the vehicle in function.
 
-### Model 2 added parts 
-Mamba Micro X2, 16.8V Waterproof ESC Motor Combo:
+### Model 2 Added Parts 
+Mamba Micro X2, 16.8V Waterproof ESC Motor Combo:<br><br>
 New and improved motor for our updated model 2. During the national competition we saw that our previous motor was quite inconsistent and was often cogging, especially for the first run off boot. The speed was not only much slower than we expected but also varied depending on the setup and friction of the surface and this significantly affected our open challenge time. After careful further testing and analysis it became evident that our motors accelation was sub-par off boot. This was because kilovoltage was too high, resulting in a lower torque. As a result, we began searching for a motor to solve our problem and decided to pick this motor out as it had the perfect torque for optimal acceleration and top speed. This way our run time became much more consistent, our vehicle could make sharper turns, go slower if needed and run normally without cogging. 
 
 ----
@@ -106,9 +106,9 @@ New and improved motor for our updated model 2. During the national competition 
 
 First off, we started our process by purchasing the Traxxas LaTrax Rally ⅛ 4WD RTR Rally Racer kit. Upon its arrival, we took off the cover and decided to make modifications. The first change we made was replacing the original motor with the 2435 Brushless 4500KV Motor. This ensured that our car would be powerful and precise enough to perform in the competition. Additionally, the brushless DC motor would not deteriorate like the brushed DC motor. Throughout the process of changing the motor, we had to replace the original electronic speed controller with the new compatible electronic speed controller and remove the radio receiver. Since we needed a way to supply power to the servo, connect the signal cables from the Arduino to the servo motor and DC motor, and grounding the DC motor and servo motor, we made a plug-in chip with soldered connections which we used to connect the signal wires, power wires, and ground wires to the servo and DC motors. Next, we made many prototypes for the vehicle base, and a camera mount using cardboard and black duct tape. After coming up with the perfect design, we made it sturdy for the final product. A cut clipboard for a base to hold the car’s parts. This was suspended by four, one cm standoffs screwed to the chassis plate. We also made the camera mount out of Lego because it was lightweight and sturdy. The lego was glued together at the end to ensure stability and sturdiness. Afterwards, we screwed our camera into the mount and positioned it so it could detect as much as possible, including the ground and walls. Then we attached the Arduino and the Raspberry Pi onto the base clipboard of the robot. The last thing we had to do was connect all the wires to their respective ports and manage them properly using electrical tape and zip-ties to prevent them from protruding. This in turn helped to keep our robot compact and organized. Throughout the process we did not end up 3D printing any of our building components and instead chose to use various parts from different products.
 
-## Model 2 Changes
+## Model 2 Design Changes
 
-Along with the Dominus Model 2 came a few design changes. First and foremost, during nationals we realized that our camera could not detect for the entire width of our vehicle due to the width of our camera mount. For this reason we decided to remake the camera mount to be 1.5cm skinnier on each side to fit the exact width our camera could detect.  
+Along with the Dominus Model 2 came a few design changes. First and foremost, we removed the old motor and installed the new one into our chassis. This enabled our vehicle to perform sharper turns and run normally without cogging due to the higher torque offered by the new motor[(more info)](#model-2-added-parts). Afterwards, we decided to make our vehicle 1.5cm skinnier on each side, since during nationals we discovered that our vehicle was slightly too wide causing maneuvering through obstacles to be an ardous process. As a result, to slim our vehicle down, we decided to rebuild the camera mount, flip our raspberry pi 90 degrees and place the arduino on the back of the camera mount. Subsequently, we decided to make our base sturdier so that it could comfortably withhold the weight of the parts on a slimmer frame. This was accomplished by replacing plastic nuts with metal nuts as well as using screws instead of glue to attach support pillars and by screws instead of glue. Finally, we made our vehicle more aesthetically appealing by changing our vehicle's colour scheme from white to black to match the stickers and new motor.
 
 ----
 
