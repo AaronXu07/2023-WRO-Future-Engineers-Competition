@@ -78,7 +78,7 @@ right_x = 640
 surround_area_L = 0
 surround_area_R = 0
 
-red_wait = 12
+red_wait = 13
 
 if __name__ == '__main__':
     
@@ -132,7 +132,7 @@ while True:
     L_subimage = im[265:390, 5:185] #Subimage that is analyzed to find the left wall
     R_subimage = im[265:390, 460:635] #Subimage that is analyzed to find the right wall
     
-    M_subimage = im[218:420, 135:515]  #Subimage that is analyzed to find the pillars #was im[217:420, 130:515]
+    M_subimage = im[218:422, 132:515]  #Subimage that is analyzed to find the pillars #was im[218:420, 135:515]
     turn_subimage = im[285:310, 185:465] #Subimage that is analyzed to find the lines on the floor (was im[285:315, 190:470])
     back_wall = im[220:280, 165:500] #Subimage that is analyzed to find the approaching wall in the front
     
@@ -324,7 +324,7 @@ while True:
     if(orange_line_a >0):
         ratio_O = O_rect/orange_line_a
         #print(ratio_O)
-    if(ratio_O<2.7):
+    if(ratio_O<2.5): #was 2.7/2.6
         orange_line_a=0
         
     #section below finds the red and green pillars and takes note of their area (for manueuvering the obstacles)    
@@ -483,12 +483,12 @@ while True:
     elif(Clockwise): #adding count on turn
         if(TurnFrameCount > 4 and count < 12): 
             TurnFrameCount = 0
-            #pillar_frames = 0
+            pillar_frames = 0
             after_turn = 0
             count+=1
             print(count)
     
-    if(count > 0 and after_turn < 110):
+    if(count > 0 and after_turn < 140):
         TurnFrameCount = 0
         
     #Section below runs if the car needs to switch drection, (if it's the end of the 2nd lap and the last pillar seen was red)
@@ -539,18 +539,18 @@ while True:
             
             sendnum = str(2074)
             ser.write((sendnum + "\n").encode('utf-8'))
-            sleep(0.6) #was 0.5
+            sleep(0.4) #was 0.6/0.5
             
             ser.write((sendnum + "\n").encode('utf-8'))
             sendnum = str(2144)
             ser.write((sendnum + "\n").encode('utf-8'))
-            sleep(1.1) #was 1.2
+            sleep(1) #was 1.1
             
             sendnum = str(1586) #was 1572 / 1585
             ser.write((sendnum + "\n").encode('utf-8'))
             sendnum = str(2060)
             ser.write((sendnum + "\n").encode('utf-8'))
-            sleep(1.5) #was 2.2
+            sleep(1.2) #was 1.5
             
             sendnum = str(1500) #was 1585 / 1580
             ser.write((sendnum + "\n").encode('utf-8'))
@@ -560,7 +560,7 @@ while True:
             ser.write((sendnum + "\n").encode('utf-8'))
             sendnum = str(2090) #was 2120
             ser.write((sendnum + "\n").encode('utf-8'))
-            sleep(0.4) #was 0.5
+            sleep(0.3) #was 0.5
             
             sendnum = str(2134) #was 2120
             ser.write((sendnum + "\n").encode('utf-8'))
@@ -585,10 +585,10 @@ while True:
         ratio_L = 0
         ratio_R = 0
         
-    if(ratio_L > 5):
+    if(ratio_L > 4): #was 5
         left_lane_a = 0
         
-    if(ratio_R > 5):
+    if(ratio_R > 4): #was 5
         right_lane_a = 0
     
     
@@ -650,14 +650,14 @@ while True:
         ratio_red = red_rect/red_pillar_area
         #print(ratio_red)
         
-    if(ratio_red>2.1):
+    if(ratio_red>2.2):
         red_pillar_area = 0
      
     if(CounterClockwise):
-        red_wait = 10
+        red_wait = 8
     
     if(Clockwise):
-        red_wait = 12
+        red_wait = 13
         
         
     #RED PILLAR DETECTION (and maneuvering for red pillars)
@@ -748,7 +748,7 @@ while True:
     if (count == 12): #end when see the upcoming line on ground
         FinalFrame+=1
            
-        if(FinalFrame > 190):#stops car after it has run 370 frames to make sure it ends at the correct place
+        if(FinalFrame > 175):#stops car after it has run 190 frames to make sure it ends at the correct place
             sendnum = str(1500)#stops car
             ser.write((sendnum + "\n").encode('utf-8'))
             sendnum = str(2098)
