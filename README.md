@@ -8,7 +8,7 @@ This repository contains the engineering process including materials, software, 
 - Aaron Xu - email: <aaronssupmail@gmail.com>
 - Rudransh Srivastava - email: <rudranshsri55@gmail.com>
 - Daniel Chen - email: <daniel.chen0113@gmail.com>
-
+[(View Official Team Photo)](t-photos/OfficialTeamPhoto.jpg)
 ----
 
 ## Content
