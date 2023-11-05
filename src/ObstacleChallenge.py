@@ -78,7 +78,7 @@ right_x = 640
 surround_area_L = 0
 surround_area_R = 0
 
-red_wait = 12
+red_wait = 10 #was 11/12
 
 final_turnaround = 0
 
@@ -131,10 +131,10 @@ while True:
     B_rect = 0
     ratio_B = 0
 
-    L_subimage = im[265:390, 5:185] #Subimage that is analyzed to find the left wall
-    R_subimage = im[265:390, 460:635] #Subimage that is analyzed to find the right wall
+    L_subimage = im[265:390, 0:185] #Subimage that is analyzed to find the left wall #was 265:390, 5:185
+    R_subimage = im[265:390, 460:640] #Subimage that is analyzed to find the right wall #was 265:390, 460:635
     
-    M_subimage = im[218:422, 132:515]  #Subimage that is analyzed to find the pillars #was im[218:420, 135:515]
+    M_subimage = im[217:422, 134:512]  #Subimage that is analyzed to find the pillars #was im[218:422, 132:512]
     turn_subimage = im[285:315, 185:465] #Subimage that is analyzed to find the lines on the floor (was im[285:313, 185:465])
     back_wall = im[220:280, 165:500] #Subimage that is analyzed to find the approaching wall in the front
     
@@ -465,7 +465,6 @@ while True:
     elif(CounterClockwise): #adding count on turn
         if(TurnFrameCount > 3 and count < 12): 
             TurnFrameCount = 0
-            pillar_frames = 0
             after_turn = 0
             count+=1
             print(count)
@@ -485,17 +484,16 @@ while True:
     elif(Clockwise): #adding count on turn
         if(TurnFrameCount > 4 and count < 12): 
             TurnFrameCount = 0
-            pillar_frames = 0
             after_turn = 0
             count+=1
             print(count)
     
-    if(count > 0 and after_turn < 130): #was 140
+    if(count > 0 and after_turn < 135): #was 140
         TurnFrameCount = 0
     
     
     #TURN AROUND CHECK
-    if(count == 8 and if_turnaround and after_turn > 120): 
+    if(count == 8 and if_turnaround and after_turn > 110): #was 120
         if(Last_Pillar == "red"):
             if_turnaround = False
             final_turnaround+=1
@@ -509,7 +507,7 @@ while True:
         final_turnaround+=1
         
         
-        if(Clockwise and final_turnaround > 60): #was 65
+        if(Clockwise and final_turnaround > 70): #was 60
             Clockwise = False
             CounterClockwise = True
             
@@ -542,7 +540,7 @@ while True:
             ser.write((sendnum + "\n").encode('utf-8'))
             sleep(0.1) # was 1
              
-            sendnum = str(2138) #was 2136
+            sendnum = str(2140) #was 2138
             ser.write((sendnum + "\n").encode('utf-8'))
             sleep(1) #was 1.3
             
@@ -558,7 +556,7 @@ while True:
             sendnum = str(sendnum)
             ser.write((sendnum + "\n").encode('utf-8'))
             
-        elif(CounterClockwise and final_turnaround > 60): 
+        elif(CounterClockwise and final_turnaround > 70): #was 60
             Clockwise = True
             CounterClockwise = False
             
@@ -656,13 +654,13 @@ while True:
             if (right_lane_a <= 80): 
                 steering = 40
             elif (left_lane_a <= 80):
-                steering = -42
+                steering = -40
         
         if(CounterClockwise):
             if (left_lane_a <= 80):
                 steering = -44 #was -44
             elif (right_lane_a <= 80):  
-                steering = 40 # was 40
+                steering = 38 # was 40
         
         sendnum = angle-steering # Greater Than 2100 = to left | Less than 2100 = to the right 
         
@@ -670,11 +668,11 @@ while True:
     
     
     #BACK WALL DETECTION (turn sharp one way if the approaching wall is very close after passing an obstacle to not crash into the wall
-    if(Back_wall_a > 9700):
+    if(Back_wall_a > 9800): #was 9700
         #print(Back_wall_a)
         
         if(Clockwise and Last_Pillar == "green"):
-            sendnum = 2058
+            sendnum = 2060
         
         if(CounterClockwise and Last_Pillar == "red"):
             sendnum = 2137 #was 2136
@@ -691,7 +689,7 @@ while True:
         red_wait = 8
     
     if(Clockwise):
-        red_wait = 12
+        red_wait = 10 #was 11 / 12
         
         
     #RED PILLAR DETECTION (and maneuvering for red pillars)
@@ -700,7 +698,7 @@ while True:
         if(green_pillar_area >= 150):
             if(red_y > green_y):
                 if(red_pillar_area <= 750):
-                    sendnum = 2072 #was 74
+                    sendnum = 2072 #was 72
                 elif(red_pillar_area <=1500):
                     sendnum = 2068 #was 72
                 elif(red_pillar_area <=2000):
@@ -712,12 +710,12 @@ while True:
                 else:
                     sendnum = 2052 #was 58  
                 
-                if(pillar_frames > 10 and red_pillar_area>350):
+                if(pillar_frames > 10 and red_pillar_area>400):
                     Last_Pillar = "red"
                  
         else:
             if(red_pillar_area <= 750):
-                sendnum = 2072 #was 74
+                sendnum = 2072 #was 72
             elif(red_pillar_area <=1500):
                 sendnum = 2068 #was 72
             elif(red_pillar_area <=2000):
@@ -729,17 +727,23 @@ while True:
             else:
                 sendnum = 2052 #was 58   
             
-            if(pillar_frames > 10 and red_pillar_area>350):
+            if(pillar_frames > 10 and red_pillar_area>400):
                 Last_Pillar = "red"
-    
+        
+        if(final_turnaround >25):
+            final_turnaround+=3
+            sendnum = str(1400) #was all 1395
+            ser.write((sendnum + "\n").encode('utf-8'))
+            
+            sendnum = 2182
     
     #GREEN PILLAR DETECTION (and maneuvering for green pillars)
-    if (green_pillar_area >= 150 and pillar_frames > 9): #movement for detection of green pillar #was 150 | 8, 7 or 6
+    if (green_pillar_area >= 150 and pillar_frames > 9): #movement for detection of green pillar #was 150 | 8, 7 or 6, 9
         #print("green pillar area: ", green_pillar_area)       
         if(red_pillar_area >= 150):
             if(green_y > red_y):
                 if(green_pillar_area <= 650):
-                    sendnum = 2132 #was 2134
+                    sendnum = 2134 #was 2132
                 elif(green_pillar_area <= 1400):
                     sendnum = 2136 #was 2136
                 elif(green_pillar_area <= 1900):
@@ -751,12 +755,12 @@ while True:
                 else:
                     sendnum = 2150
                 
-                if(pillar_frames > 10 and green_pillar_area > 350):
+                if(pillar_frames > 10 and green_pillar_area > 400):
                     Last_Pillar = "green"
                 
         else:
             if(green_pillar_area <= 650):
-                sendnum = 2132
+                sendnum = 2134
             elif(green_pillar_area <= 1400):
                 sendnum = 2136 
             elif(green_pillar_area <= 1900):
@@ -768,10 +772,11 @@ while True:
             else:
                 sendnum = 2150
                 
-            if(pillar_frames > 10 and green_pillar_area > 350):
+            if(pillar_frames > 10 and green_pillar_area > 400):
                 Last_Pillar = "green"
          
         if(final_turnaround > 0):
+            final_turnaround+=1
             sendnum = str(1395) #was all 1395
             ser.write((sendnum + "\n").encode('utf-8'))
             
