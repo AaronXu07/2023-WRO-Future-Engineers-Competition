@@ -82,6 +82,8 @@ red_wait = 10 #was 11/12
 
 final_turnaround = 0
 
+time_last = 0
+
 if __name__ == '__main__':
     
     GPIO.setwarnings(False)#setup for the push buton to start the car
@@ -450,17 +452,32 @@ while True:
     pillar_frames+=1
     after_turn+=1
     #print(Last_Pillar)
+    #print(pillar_frames)
     
+    if(green_pillar_area <= 150 and red_pillar_area <=150):
+        time_last +=1
+    elif(Clockwise and Orange_Seen == False):
+        if(green_pillar_area >= 500 or red_pillar_area >=500):
+            time_last = 0
+    elif(CounterClockwise and Blue_Seen == False):
+        if(green_pillar_area >= 500 or red_pillar_area >=500):
+            time_last = 0
+            
+            
     if(blue_line_a > 120): #counting counterclockwise movement (detect blue line for turns) #was 300
         if(Clockwise == False and CounterClockwise == False):
             CounterClockwise = True
             print("Counterclockwise")
-        if(CounterClockwise):
-            TurnFrameCount+=1
-            pillar_frames = 0
-            
+        
         Blue_Seen = True
         Orange_Seen = False
+        
+        if(CounterClockwise):
+            TurnFrameCount+=1
+        
+            if(time_last < 50):
+                pillar_frames = 0
+            
     
     elif(CounterClockwise): #adding count on turn
         if(TurnFrameCount > 3 and count < 12): 
@@ -474,12 +491,16 @@ while True:
         if(Clockwise == False and CounterClockwise == False):
             Clockwise = True
             print("Clockwise")
-        if(Clockwise):
-            TurnFrameCount+=1
-            pillar_frames = 0
-            
+        
         Orange_Seen = True
         Blue_Seen = False
+        
+        if(Clockwise):
+            TurnFrameCount+=1
+            
+            if(time_last < 40):
+                pillar_frames = 0
+            
         
     elif(Clockwise): #adding count on turn
         if(TurnFrameCount > 4 and count < 12): 
@@ -692,6 +713,7 @@ while True:
         red_wait = 10 #was 11 / 12
         
         
+        
     #RED PILLAR DETECTION (and maneuvering for red pillars)
     if (red_pillar_area >= 150 and pillar_frames > red_wait): #movement for detection of red pillar #was 150 | 10/12/13
         #print("red pillar area: ", red_pillar_area)
@@ -782,7 +804,7 @@ while True:
             
             sendnum = 2124
              
-             
+        
     #Sends the angle command to the arduino
             
     #print("angle is: ", sendnum)
