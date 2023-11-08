@@ -94,7 +94,7 @@ CERRXIAN 90 Degree USB A to USB B Printer Cable:
 90-degree cables to replace the old protruding wires which collided with obstacles.   
 
 Hosim 2pcs 7.4V 1600mAh 25C T Connector Replacement Rechargable Battery:
-Battery for motor to keep the vehicle in function.
+battery for motor to keep the vehicle in function.
 
 ### Model 2 Added Parts 
 Mamba Micro X2, 16.8V Waterproof ESC Motor Combo:<br><br>
