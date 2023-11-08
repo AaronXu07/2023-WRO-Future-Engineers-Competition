@@ -1,7 +1,7 @@
 Engineering Documentation | Team Dominus | Explorer Robotics | Canada
 ====
 
-This repository contains the engineering process including materials, software,  schematic, pictures, and descriptions of Team Dominus's self-driven vehicle model participating in the WRO Future Engineers competition in the season 2023.
+This repository contains the engineering process including materials, software, schematic, pictures, and descriptions of Team Dominus's self-driven vehicle model participating in the WRO Future Engineers competition in the 2023 season.
 ----
 
 ## Team Members: 
@@ -13,12 +13,12 @@ This repository contains the engineering process including materials, software, 
 
 ## Content
 
-* `t-photos` contains 2 photos of the team (an official one and one funny photo with all team members)
-* `v-photos` contains 6 photos of the vehicle (from every side, from top and bottom)
+* `t-photos` contains 2 photos of the team (an official one and one funny photo with all team members).
+* `v-photos` contains 6 photos of the vehicle (from every side, from top and bottom).
 * `video` contains the video.md file with the links to the videos where driving demonstrations exists
-* `schemes` contains a schematic diagram in form of a PNG of the electromechanical components illustrating all the elements (electronic components and motors) used in the vehicle and how they connect to each other.
-* `src` contains code of control software for all components which were programmed to participate in the competition
-* `other` is for other files which can be used to understand how to prepare the vehicle for the competition. 
+* `schemes` contains a schematic diagram in form of a PNG of the electromechanical components illustrating all the elements (electronic components and motors) used in the vehicle, and how they connect to each other.
+* `src` contains code of control software for all components which were programmed to participate in the competition.
+* `other` is for miscellaneous files which can be used to understand how we prepared the vehicle for the competition. 
 ----
 
 
@@ -70,13 +70,13 @@ ELEGOO UNO Project Super Starter Kit:
 Additional hardware parts including wires that we could use for our robot.   
 
 Traxxas La Trax Rally Racer Kit 1/18 4WD:
-Sturdy chassis that fits the dimensions, along with being lightweight. This served as the base for our vehicle which we could build around. Moreover, it comes with a bumper which proved beneficial during test runs as it prevented damage to our vehicle. 
+Sturdy chassis that fits the dimensions, along with being lightweight. This serves as the base for our vehicle which we can build around. Moreover, it comes with a bumper which proves beneficial during test runs as it prevents damage to our vehicle. 
 
 Gikfun Uno R3 Case for Arduino:
-Case for our Arduino which we used for easy attachment onto the vehicle. Also protects the Arduino from getting damaged.
+Case for our Arduino which we use for easy attachment onto the vehicle. Also protects the Arduino from getting damaged.
 
 RC Car Motor ESC Combo:
-Brushless motor for greater energy efficiency since there aren't any brushes creating friction and losing energy. Additionally, the brushless motor will have better speed and higher torque resulting in quicker turning capability and greater efficiency for our robot. Moreover, the brushless motor allows us to have better control of the speed of our robot over the original brushed motor that the chassis came with. 
+Brushless motor for greater energy efficiency as there aren't any brushes creating friction and losing energy. Additionally, the brushless motor will have improved speed and higher torque resulting in a quicker turning capability and greater efficiency for our robot. Moreover, the brushless motor allows us to have better control of the speed of our robot over the original brushed motor that the chassis came with. 
 
 Raspberry Pi Wide Angle Camera Module:
 This is the best camera that is compatible with Raspberry Pi for us, having great colour quality and high fps which is important for our color lane detection system. It is used to detect walls and obstacles for both the open and obstacle challenges.  
@@ -108,13 +108,13 @@ First off, we started our process by purchasing the Traxxas LaTrax Rally ⅛ 4WD
 
 ## Model 2 Design Changes
 
-Along with the Dominus Model 2 came a few design changes. First and foremost, we removed the old motor and installed the new one into our chassis. This enabled our vehicle to perform sharper turns and run normally without cogging due to the higher torque offered by the new motor[(more info)](#model-2-added-parts). Afterwards, we decided to make our vehicle 1.5cm skinnier on each side, since during nationals we discovered that our vehicle was slightly too wide causing maneuvering through obstacles to be an ardous process. As a result, to slim our vehicle down, we decided to rebuild the camera mount, flip our raspberry pi 90 degrees and place the arduino on the back of the camera mount. Subsequently, we decided to make our base sturdier so that it could comfortably withhold the weight of the parts on a slimmer frame. This was accomplished by replacing plastic nuts with metal nuts as well as using screws instead of glue to attach support pillars and by screws instead of glue. Finally, we made our vehicle more aesthetically appealing by changing our vehicle's colour scheme from white to black to match the stickers and new motor. After all the changes our vehicle appeared quite different from before [(see model comparison)](v-photos/ModelComparison.jpg).
+Along with the Dominus Model 2 came a few design changes. First and foremost, we removed the old motor and installed the new one into our chassis. This enables our vehicle to perform sharper turns and run smoothly without cogging due to the higher torque offered by the new motor[(more info)](#model-2-added-parts). Afterwards, we decided to make our vehicle 1.5cm slimmer on the left and right sides, since during the national competition we discovered that our vehicle was slightly too wide, which had proved maneuvering through obstacles to be an ardous process. In order to slim our vehicle down, we rebuilt the camera mount, flipped our Raspberry Pi 90 degrees and placed the Arduino on the back of the camera mount. Subsequently, we decided to make our base sturdier so that it could comfortably withhold the weight of the parts on a slimmer frame. This was accomplished by replacing the plastic nuts with metal nuts as well as using screws instead of glue to attach support pillars. Finally, we made our vehicle more aesthetically appealing by changing our vehicle's colour scheme from white to black in order to match the stickers and new motor. After all the changes, our vehicle now appears much different from before [(see model comparison)](v-photos/ModelComparison.jpg).
 
 ----
 
 ## Overview of Code.
 
-To complete the open and obstacle challenges, we needed to program computer vision in order to maneuver the course. This was done on the Raspberry Pi. The Raspberry Pi then sends number commands to the Arduino, which in turn controls the DC motor speed and steering. The Arduino code is coded in c++ and receives a number from the Raspberry Pi. This number dictates what action the Arduino should perform: a signal of 1500 is a complete stop, under 1500 is forward, over 1500 is backward, and the number over 2000 is the angle at which the servo must steer. We used a variety of libraries on the Raspberry Pi. Most notably, we used OpenCV (cv2) for camera operations, Time for time-related functions, Picamera2 for controlling the Raspberry Pi camera, Serial for communication with an Arduino, Numpy for array processing, and RPi.GPIO for handling a push-button to start the car.
+To complete the open and obstacle challenges, we needed to program computer vision in order to maneuver the course. This was done on the Raspberry Pi. The Raspberry Pi then sends number commands to the Arduino, which in turn controls the DC motor speed and steering. The Arduino code is coded in C++ and receives a number from the Raspberry Pi. This number dictates what action the Arduino should perform: a signal of 1500 is a complete stop, less than 1500 is forward, more than 1500 is backward, and the number over 2000 is the angle at which the servo must steer. We used a variety of libraries on the Raspberry Pi. Most notably, we used OpenCV (cv2) for camera operations, Time for time-related functions, Picamera2 for controlling the Raspberry Pi camera, Serial for communication with an Arduino, Numpy for array processing, and RPi.GPIO for handling a push-button to start the car.
 
 ----
 
