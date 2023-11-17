@@ -1,4 +1,4 @@
-Engineering Documentation | Team Dominus | Explorer Robotics | Canada
+Engineering Documentation | Team Dominus | Explorer Robotics | Team Canada
 ====
 
 This repository contains the engineering process including materials, software, schematic, pictures, and descriptions of Team Dominus's self-driven vehicle model participating in the WRO Future Engineers competition in the 2023 season.
